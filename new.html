@@ -125,6 +125,21 @@
         word-break: break-word; /* Break long words if needed */
     }
 
+    /* Add styles for the response text */
+    #cached-section #cached-response-text {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #e6f7ff;
+        border-radius: 8px;
+        min-height: 30px;
+        font-family: monospace;
+        width: 100%;
+        box-sizing: border-box;
+        white-space: pre-wrap;
+        word-break: break-word;
+        display: none; /* Initially hidden */
+    }
+
     /* Adjust the main container spacing */
     #cached-section .cached-main-container {
         display: flex;
@@ -402,7 +417,7 @@
     <div class="cached-main-container">
       <div class="cached-left-container">
         <div class="cached-grid-container">
-          <img src="static/images/pickup.jpg" alt="Grid Image" class="cached-image">
+          <img src="static/images/fergus.png" alt="Grid Image" class="cached-image">
           <div id="cached-grid" class="cached-grid">
           </div>
         </div>
@@ -416,7 +431,7 @@
           <span class="cached-word-option" data-row="0" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
         </div>
         <div class="cached-sentence-row">
-          <span class="cached-word-option" data-row="1" data-word="little dog">little dog</span>
+          <span class="cached-word-option" data-row="1" data-word="little cat">little cat</span>
           <span class="cached-word-option" data-row="1" data-word="happy puppy">happy puppy</span>
           <span class="cached-word-option" data-row="1" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
         </div>
@@ -436,18 +451,19 @@
           <span class="cached-word-option" data-row="4" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
         </div>
         <div class="cached-sentence-row">
-          <span class="cached-word-option" data-row="5" data-word="peaceful garden">peaceful garden</span>
+          <span class="cached-word-option" data-row="5" data-word="cozy home">cozy home</span>
           <span class="cached-word-option" data-row="5" data-word="sunny park">sunny park</span>
           <span class="cached-word-option" data-row="5" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
         </div>
         <div id="cached-current-sentence">Click word pairs above to build your sentence!</div>
+        <div id="cached-response-text"></div>
       </div>
     </div>
 
     <script>
       (() => {
         // Configuration for calling the UniDisc API.  
-        const API_URL = "http://localhost:8001/v1/chat/completions";
+        const API_URL = "https://grafana.aswerdlow.com/v1/chat/completions";
         const HARDCODED_CONFIG = {
             temperature: 0.9,
             top_p: 0.95,
@@ -508,38 +524,49 @@
         }
         
         async function callUnidiscAPI(imageBlob, maskArray, sentence) {
+            // Replace <mask> with <m> for API call
+            const apiSentence = sentence.replace(/<mask>/g, "<m>");
+            
+            console.log("Called API with sentence: ", apiSentence);
             const messages = [{
                 role: "user",
                 content: [
-                    { type: "text", text: sentence }
+                    { type: "text", text: apiSentence }
                 ]
             }];
         
-            const resizedImage = await processImage(await imageBlob.arrayBuffer());
-            const imageBase64 = await new Promise(resolve => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result);
-                reader.readAsDataURL(resizedImage);
-            });
-            messages[0].content.push({
-                type: "image_url",
-                image_url: { url: imageBase64 },
-                is_mask: false
-            });
-        
-            if (maskArray) {
-                const maskData = encodeMask(maskArray);
+            // Check if we need to include the image and mask
+            const hasMaskedText = apiSentence.includes("<m>");
+            const hasMaskedImage = maskArray && maskArray.some(row => row.some(cell => cell === true));
+            
+            // Only include image and mask if needed
+            if (hasMaskedText || hasMaskedImage) {
+                const resizedImage = await processImage(await imageBlob.arrayBuffer());
+                const imageBase64 = await new Promise(resolve => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.readAsDataURL(resizedImage);
+                });
                 messages[0].content.push({
                     type: "image_url",
-                    image_url: {
-                        url: `data:image/png;base64,${maskData.data}`,
-                        mask_info: JSON.stringify({
-                            width: maskData.width,
-                            height: maskData.height
-                        })
-                    },
-                    is_mask: true
+                    image_url: { url: imageBase64 },
+                    is_mask: false
                 });
+        
+                if (maskArray) {
+                    const maskData = encodeMask(maskArray);
+                    messages[0].content.push({
+                        type: "image_url",
+                        image_url: {
+                            url: `data:image/png;base64,${maskData.data}`,
+                            mask_info: JSON.stringify({
+                                width: maskData.width,
+                                height: maskData.height
+                            })
+                        },
+                        is_mask: true
+                    });
+                }
             }
         
             const payload = {
@@ -551,7 +578,12 @@
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                        'Access-Control-Allow-Headers': 'Content-Type'
+                    },
                     body: JSON.stringify(payload)
                 });
         
@@ -570,6 +602,8 @@
         const cells = [];
         let currentRow = 0;
         let currentCol = 0;
+        let maskLocked = false; // Add this flag to track if mask is locked in place
+        let activeMask = null; // Track the currently active mask coordinates
         
         // Create grid cells based on GRID_SIZE.
         for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
@@ -583,6 +617,9 @@
         
         // Update highlighted grid region.
         function highlightCells(row, col) {
+            // If mask is locked, don't update highlights on mousemove
+            if (maskLocked) return;
+            
             cells.forEach(cell => cell.classList.remove('cached-highlighted'));
             const offset = Math.floor(MASK_SIZE / 2);
             const topLeftRow = Math.min(Math.max(row - offset, 0), GRID_SIZE - MASK_SIZE);
@@ -624,7 +661,7 @@
         updateSentence();
         
         section.querySelectorAll('.cached-word-option').forEach(word => {
-            word.addEventListener('click', () => {
+            word.addEventListener('click', async () => {
                 const row = parseInt(word.dataset.row);
                 const wordText = word.dataset.word;
         
@@ -635,16 +672,25 @@
                 selectedWords[row] = wordText;
         
                 updateSentence();
+                
+                // Call API directly without requiring a mask
+                try {
+                    await updateImage();
+                } catch (error) {
+                    console.error('Error updating image after text change:', error);
+                }
             });
         });
         
         function updateSentence() {
-            const validWords = selectedWords.filter(word => word !== null);
-            if (validWords.length > 0) {
-                currentSentence.textContent = validWords.join(' ') + '.';
-            } else {
-                currentSentence.textContent = defaultSelections.join(' ') + '.';
+            const words = selectedWords.filter(word => word !== null);
+            const finalWords = words.length > 0 ? words : defaultSelections;
+            let sentence = finalWords[0] || '';
+            for (let i = 1; i < finalWords.length; i++) {
+                const joiner = (finalWords[i] === '<mask>' || finalWords[i - 1] === '<mask>') ? '<mask>' : ' ';
+                sentence += joiner + finalWords[i];
             }
+            currentSentence.textContent = sentence + '.';
         }
         
         grid.addEventListener('mousemove', (e) => {
@@ -656,49 +702,100 @@
             highlightCells(row, col);
         });
         
-        async function updateImageFromCoords(topLeftRow, topLeftCol) {
+        async function updateImage() {
             try {
                 const img = section.querySelector('.cached-image');
-        
-                const maskArray = Array.from({ length: GRID_SIZE }, () =>
-                    Array(GRID_SIZE).fill(false)
-                );
-                for (let r = topLeftRow; r < topLeftRow + MASK_SIZE; r++) {
-                    for (let c = topLeftCol; c < topLeftCol + MASK_SIZE; c++) {
-                        maskArray[r][c] = true;
+                const currentSentence = section.querySelector('#cached-current-sentence');
+                const responseText = section.querySelector('#cached-response-text');
+
+                let maskArray = null;
+                
+                // Only create a mask if we have an active mask
+                if (activeMask) {
+                    const [topLeftRow, topLeftCol] = activeMask;
+                    maskArray = Array.from({ length: GRID_SIZE }, () =>
+                        Array(GRID_SIZE).fill(false)
+                    );
+                    for (let r = topLeftRow; r < topLeftRow + MASK_SIZE; r++) {
+                        for (let c = topLeftCol; c < topLeftCol + MASK_SIZE; c++) {
+                            maskArray[r][c] = true;
+                        }
                     }
                 }
         
-                const sentence = selectedWords.filter(w => w !== null).join(' ');
+                const sentence = currentSentence.textContent
                 const imageBlob = await fetch(img.src).then(res => res.blob());
+                
+                // Show loading state
+                currentSentence.style.display = 'none';
+                responseText.style.display = 'block';
+                responseText.textContent = 'Processing your request...';
+                
                 const response = await callUnidiscAPI(imageBlob, maskArray, sentence);
-        
+
                 const message = response.choices?.[0]?.message;
                 if (!message) {
                     throw new Error("No message found in the API response");
                 }
-        
-                let imageUrl;
+
+                // Extract text content if available
+                let textContent = '';
+                if (Array.isArray(message.content)) {
+                    const textPart = message.content.find(part => part.type === "text");
+                    if (textPart && textPart.text) {
+                        textContent = textPart.text;
+                    }
+                } else if (typeof message.content === 'string') {
+                    textContent = message.content;
+                }
+
+                // Update response text
+                if (textContent) {
+                    responseText.textContent = textContent;
+                } else {
+                    responseText.textContent = 'Image updated successfully!';
+                }
+
+                // Check if there's an image in the response
+                let imageUrl = null;
                 if (Array.isArray(message.content)) {
                     const imagePart = message.content.find(part => part.type === "image_url");
-                    if (!imagePart || !imagePart.image_url || !imagePart.image_url.url) {
-                        throw new Error("No valid image_url found in the assistant's message content");
+                    if (imagePart && imagePart.image_url && imagePart.image_url.url) {
+                        imageUrl = imagePart.image_url.url;
                     }
-                    imageUrl = imagePart.image_url.url;
-                } else {
-                    if (!message.image_url || !message.image_url.url) {
-                        throw new Error("No valid image_url found in the assistant's message");
-                    }
+                } else if (message.image_url && message.image_url.url) {
                     imageUrl = message.image_url.url;
                 }
-        
-                const newImageUrl = imageUrl.startsWith("data:image/jpeg;base64,")
-                    ? imageUrl
-                    : `data:image/jpeg;base64,${imageUrl}`;
-                img.src = newImageUrl;
-        
+
+                // Only update the image if we received a new one
+                if (imageUrl) {
+                    const newImageUrl = imageUrl.startsWith("data:image/jpeg;base64,")
+                        ? imageUrl
+                        : `data:image/jpeg;base64,${imageUrl}`;
+                    img.src = newImageUrl;
+                }
+
+                // Always show the response text if we have it
+                if (textContent) {
+                    responseText.style.display = 'block';
+                    currentSentence.style.display = 'none';
+                } else {
+                    // If no text response, show the current sentence again
+                    responseText.style.display = 'none';
+                    currentSentence.style.display = 'block';
+                }
+                
+                // Reset the mask state after getting response
+                maskLocked = false;
+                activeMask = null;
+                cells.forEach(cell => cell.classList.remove('cached-highlighted'));
+
             } catch (error) {
                 console.error('Image update failed:', error);
+                const responseText = section.querySelector('#cached-response-text');
+                responseText.textContent = 'Error: ' + error.message;
+                responseText.style.display = 'block';
+                section.querySelector('#cached-current-sentence').style.display = 'none';
             }
         }
         
@@ -707,16 +804,45 @@
             // Compute the top-left coordinate of the mask ensuring it stays within grid bounds.
             const safeTopLeftRow = Math.min(Math.max(currentRow - offset, 0), GRID_SIZE - MASK_SIZE);
             const safeTopLeftCol = Math.min(Math.max(currentCol - offset, 0), GRID_SIZE - MASK_SIZE);
+            
+            if (maskLocked && 
+                activeMask && 
+                activeMask[0] === safeTopLeftRow && 
+                activeMask[1] === safeTopLeftCol) {
+                // If clicking on the same mask area, unlock it
+                maskLocked = false;
+                activeMask = null;
+                // Clear highlights
+                cells.forEach(cell => cell.classList.remove('cached-highlighted'));
+            } else {
+                // Lock the mask at current position
+                maskLocked = true;
+                activeMask = [safeTopLeftRow, safeTopLeftCol];
+                
+                // Ensure the mask area is properly highlighted
+                cells.forEach(cell => cell.classList.remove('cached-highlighted'));
+                for (let r = safeTopLeftRow; r < safeTopLeftRow + MASK_SIZE; r++) {
+                    for (let c = safeTopLeftCol; c < safeTopLeftCol + MASK_SIZE; c++) {
+                        const cell = cells[r * GRID_SIZE + c];
+                        if (cell) {
+                            cell.classList.add('cached-highlighted');
+                        }
+                    }
+                }
+            }
         
             try {
-                await updateImageFromCoords(safeTopLeftRow, safeTopLeftCol);
+                await updateImage();
             } catch (error) {
                 console.error('Error updating image:', error);
             }
         });
         
         grid.addEventListener('mouseleave', () => {
-            cells.forEach(cell => cell.classList.remove('cached-highlighted'));
+            // Only clear highlights if mask is not locked
+            if (!maskLocked) {
+                cells.forEach(cell => cell.classList.remove('cached-highlighted'));
+            }
         });
         
         // Initialize highlighting with default values.
@@ -785,6 +911,19 @@
       #flipping-images-section .flip-card-back {
         transform: rotateY(180deg);
         z-index: 1;
+        position: relative;
+      }
+      #flipping-images-section .input-label {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        padding: 10px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        opacity: 0.8;
+        z-index: 3;
       }
       #flipping-images-section figure {
         margin: 0;
@@ -818,81 +957,97 @@
     <div class="flip-card-container"></div>
     <script>
       (function() {
-        // Define a list of flip card data.
-        // Each object contains URLs and captions for the front and back.
         const flipCardsData = [
           { 
-            frontUrl: "https://picsum.photos/200/200?random=1", 
-            frontCaption: "Random Image (front)", 
-            backUrl: "https://picsum.photos/200/200?random=2", 
-            backCaption: "Random Image (back)"
+            frontUrl: "static/images/flipping/joint/0_f.png", 
+            frontCaption: "A close-up of a corgi's face with a big smile on red lips, set against a background covered in silly doodles and scribbles.", 
+            backUrl: "static/images/flipping/joint/0_b.png", 
+            backCaption: "A close-up of a corgi's face"
           },
           { 
-            frontUrl: "https://picsum.photos/200/200?random=3", 
-            frontCaption: "Random Image (front)", 
-            backUrl: "https://picsum.photos/200/200?random=4", 
-            backCaption: "Random Image (back)"
+            frontUrl: "static/images/flipping/joint/1_f.png", 
+            frontCaption: "In a dense forest, a wise old owl and mongoose sit side by side, both supporting a gnarled tree branch.",
+            backUrl: "static/images/flipping/joint/1_b.png", 
+            backCaption: "In a dense forest, a wise old a gnarled tree branch.", 
           },
           { 
-            frontUrl: "https://picsum.photos/200/200?random=5", 
-            frontCaption: "Random Image (front)", 
-            backUrl: "https://picsum.photos/200/200?random=6", 
-            backCaption: "Random Image (back)"
+            frontUrl: "static/images/flipping/joint/2_f.png", 
+            frontCaption: "A group of hot air balloons float above the Colosseum.",
+            backUrl: "static/images/flipping/joint/2_b.png", 
+            backCaption: "A group of hot above the Colosseum.", 
           },
           { 
-            frontUrl: "https://picsum.photos/200/200?random=7", 
-            frontCaption: "Random Image (front)", 
-            backUrl: "https://picsum.photos/200/200?random=8", 
-            backCaption: "Random Image (back)"
+            frontUrl: "static/images/flipping/joint/3_f.png", 
+            frontCaption: "tropical fish swimming in shallow coral reef",
+            backUrl: "static/images/flipping/joint/3_b.png", 
+            backCaption: "tropical fish", 
           },
           { 
-            frontUrl: "https://picsum.photos/200/200?random=9", 
-            frontCaption: "Random Image (front)", 
-            backUrl: "https://picsum.photos/200/200?random=10", 
-            backCaption: "Random Image (back)"
+            frontUrl: "static/images/flipping/t2i/0.png", 
+            frontCaption: "", 
+            backUrl: "static/images/flipping/masked.png", 
+            backCaption: "A dragon with iridescent scales basking in the warm sunlight on a beach.",
           },
           { 
-            frontUrl: "https://picsum.photos/200/200?random=11", 
-            frontCaption: "Random Image (front)", 
-            backUrl: "https://picsum.photos/200/200?random=12", 
-            backCaption: "Random Image (back)"
+            frontUrl: "static/images/flipping/t2i/1.png", 
+            frontCaption: "", 
+            backUrl: "static/images/flipping/masked.png", 
+            backCaption: "A high-tech motorbike crafted from neon-lit circuit boards and scarlet glass, emitting sparks that resemble a swarm of fireflies.",
           },
           { 
-            frontUrl: "https://picsum.photos/200/200?random=13", 
-            frontCaption: "Random Image (front)", 
-            backUrl: "https://picsum.photos/200/200?random=14", 
-            backCaption: "Random Image (back)"
+            frontUrl: "static/images/flipping/t2i/2.png", 
+            frontCaption: "", 
+            backUrl: "static/images/flipping/masked.png", 
+            backCaption: "Cel shaded, Planet of the Apes character, minimalist icon",
           },
           { 
-            frontUrl: "https://picsum.photos/200/200?random=15", 
-            frontCaption: "Random Image (front)", 
-            backUrl: "https://picsum.photos/200/200?random=16", 
-            backCaption: "Random Image (back)"
+            frontUrl: "static/images/flipping/t2i/3.png", 
+            frontCaption: "", 
+            backUrl: "static/images/flipping/masked.png", 
+            backCaption: "A cyberpunk female hacker, dressed in a neon pink hoodie and ripped jeans, poses with a sleek laptop and a futuristic energy blaster, set against a gritty cityscape at night.",
+          },
+          {
+            frontUrl: "static/images/flipping/masked.png", 
+            frontCaption: "A whimsical penguin in a sports outfit, playing with balls and floating above a city skyline, inspired by the steampunk. Inspired by M.C. Escher.", 
+            backUrl: "static/images/flipping/i2t/8-1996.png", 
+            backCaption: "<i>Masked Caption</i>",
           },
           { 
-            frontUrl: "https://picsum.photos/200/200?random=17", 
-            frontCaption: "Random Image (front)", 
-            backUrl: "https://picsum.photos/200/200?random=18", 
-            backCaption: "Random Image (back)"
+            frontUrl:  "static/images/flipping/masked.png", 
+            frontCaption: "A bright red ceramic cup filled with a vibrant lemonade next to an old fashioned wooden baby wagon in a sunny backyard setting.", 
+            backUrl: "static/images/flipping/i2t/9-1997.png",
+            backCaption: "<i>Masked Caption</i>",
           },
           { 
-            frontUrl: "https://picsum.photos/200/200?random=19", 
-            frontCaption: "Random Image (front)", 
-            backUrl: "https://picsum.photos/200/200?random=20", 
-            backCaption: "Random Image (back)"
+            frontUrl: "static/images/flipping/masked.png", 
+            frontCaption: "a grove of trees at dusk with scattered branches.", 
+            backUrl: "static/images/flipping/i2t/10-1998.png", 
+            backCaption: "<i>Masked Caption</i>",
           },
           { 
-            frontUrl: "https://picsum.photos/200/200?random=21", 
-            frontCaption: "Random Image (front)", 
-            backUrl: "https://picsum.photos/200/200?random=22", 
-            backCaption: "Random Image (back)"
+            frontUrl: "static/images/flipping/joint/14_f.png", 
+            frontCaption: "A surrelaist painting of a horse's face, inspired by the works of Salvador Dali", 
+            backUrl: "static/images/flipping/joint/14_b.png", 
+            backCaption: "<i>Masked Caption</i>",
           },
           { 
-            frontUrl: "https://picsum.photos/200/200?random=23", 
-            frontCaption: "Random Image (front)", 
-            backUrl: "https://picsum.photos/200/200?random=24", 
-            backCaption: "Random Image (back)"
-          }
+            frontUrl: "static/images/flipping/joint/17_f.png", 
+            frontCaption: "Medieval-inspired drawing of enraged moths surrounding a medieval knight", 
+            backUrl: "static/images/flipping/joint/17_b.png", 
+            backCaption: "<i>Mask Mask Mask Mask Mask Mask Mask Mask</i> surrounding a medieval knight"
+          },
+          { 
+            frontUrl: "static/images/flipping/joint/18_f.png", 
+            frontCaption: "A group of willow trees surround a tranquil lake on a cloudy day.", 
+            backUrl: "static/images/flipping/joint/18_b.png", 
+            backCaption: "<i>Mask Mask Mask Mask Mask Mask Mask Mask Mask Mask</i> day.",
+          },
+          { 
+            frontUrl: "static/images/flipping/joint/19_f.png", 
+            frontCaption: "The Muse d'Orsay is located on the Seine River in Paris at night, featuring an iconic bridge style building", 
+            backUrl: "static/images/flipping/joint/19_b.png", 
+            backCaption: "The Muse d'Orsay is located on the <i>Mask Mask Mask Mask Mask Mask Mask Mask</i>",
+          },
         ];
         
         const container = document.querySelector('#flipping-images-section .flip-card-container');
@@ -906,13 +1061,14 @@
               <div class="flip-card-front">
                 <figure>
                   <img src="${card.frontUrl}" alt="Front Image">
-                  <figcaption>${card.frontCaption}</figcaption>
+                  ${card.frontCaption ? `<figcaption>${card.frontCaption}</figcaption>` : ''}
                 </figure>
               </div>
               <div class="flip-card-back">
+                <span class="input-label">Input</span>
                 <figure>
                   <img src="${card.backUrl}" alt="Back Image">
-                  <figcaption>${card.backCaption}</figcaption>
+                  ${card.backCaption ? `<figcaption>${card.backCaption}</figcaption>` : ''}
                 </figure>
               </div>
             </div>
