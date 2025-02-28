@@ -167,82 +167,361 @@
 </head>
 <body>
 
-  <!-- Header Section -->
-  <section class="hero">
-    <div class="hero-body">
-      <div class="container is-max-desktop">
-        <div class="columns is-centered">
-          <div class="column has-text-centered">
-            <h1 class="title is-1 publication-title">UniDisc: Unified Multimodal Discrete Diffusion</h1>
-            
-            <div class="is-size-5 publication-authors">
-              <span class="author-block">
-                    Alexander Swerdlow<sup>*</sup>,</span>
-                    <span class="author-block">
-                      Mihir Prabhudesai<sup>*</sup>,</span>
-                    <span class="author-block">
-                        Siddharth Gandhi,</span>
-                    <span class="author-block">
-                        Deepak Pathak,</span>
-                    <span class="author-block">
-                        Katerina Fragkiadaki
-              </span>
-              <span class="eql-cntrb"><small><br><sup>*</sup>Equal Contribution</small></span>
-              </div> 
-
-                
-
-                  <div class="column has-text-centered">
-                    <div class="publication-links">
-                      <span class="link-block">
-                        <a href="static/files/UniDisc.pdf" target="_blank"
+    <!-- Header Section -->
+    <section class="hero">
+      <div class="hero-body">
+        <div class="container is-max-desktop">
+          <div class="columns is-centered">
+            <div class="column has-text-centered">
+              <h1 class="title is-1 publication-title">UniDisc: Unified Multimodal Discrete Diffusion</h1>
+              
+              <div class="is-size-5 publication-authors">
+                <span class="author-block">
+                      Alexander Swerdlow<sup>*</sup>,</span>
+                      <span class="author-block">
+                        Mihir Prabhudesai<sup>*</sup>,</span>
+                      <span class="author-block">
+                          Siddharth Gandhi,</span>
+                      <span class="author-block">
+                          Deepak Pathak,</span>
+                      <span class="author-block">
+                          Katerina Fragkiadaki
+                </span>
+                <span class="eql-cntrb"><small><br><sup>*</sup>Equal Contribution</small></span>
+                </div> 
+  
+                  
+  
+                    <div class="column has-text-centered">
+                      <div class="publication-links">
+                        <span class="link-block">
+                          <a href="static/files/UniDisc.pdf" target="_blank"
+                          class="external-link button is-normal is-rounded is-dark">
+                          <span class="icon">
+                            <i class="fas fa-file-pdf"></i>
+                          </span>
+                          <span>Paper</span>
+                        </a>
+                      </span>
+  
+                      <!-- <span class="link-block">
+                        <a href="static/pdfs/supplementary_material.pdf" target="_blank"
                         class="external-link button is-normal is-rounded is-dark">
                         <span class="icon">
                           <i class="fas fa-file-pdf"></i>
                         </span>
-                        <span>Paper</span>
+                        <span>Supplementary</span>
                       </a>
-                    </span>
-
+                    </span> -->
+  
                     <!-- <span class="link-block">
-                      <a href="static/pdfs/supplementary_material.pdf" target="_blank"
+                      <a href="https://github.com/your_repo_here" target="_blank"
                       class="external-link button is-normal is-rounded is-dark">
                       <span class="icon">
-                        <i class="fas fa-file-pdf"></i>
+                        <i class="fab fa-github"></i>
                       </span>
-                      <span>Supplementary</span>
+                      <span>Code</span>
                     </a>
-                  </span> -->
-
+                  </span>  -->
+  
                   <!-- <span class="link-block">
-                    <a href="https://github.com/your_repo_here" target="_blank"
+                    <a href="https://arxiv.org/abs/your_paper_id" target="_blank"
                     class="external-link button is-normal is-rounded is-dark">
                     <span class="icon">
-                      <i class="fab fa-github"></i>
+                      <i class="ai ai-arxiv"></i>
                     </span>
-                    <span>Code</span>
+                    <span>arXiv</span>
                   </a>
-                </span>  -->
-
-                <!-- <span class="link-block">
-                  <a href="https://arxiv.org/abs/your_paper_id" target="_blank"
-                  class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                    <i class="ai ai-arxiv"></i>
-                  </span>
-                  <span>arXiv</span>
-                </a>
-              </span> -->
-
-            
-
-
+                </span> -->
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+    <section id="flipping-images-section">
+      <style>
+        #flipping-images-section {
+          font-family: sans-serif;
+          margin: 2rem auto;            /* Center the section vertically */
+          max-width: 1050px;            /* Constrain width similar to other sections */
+          padding: 0 20px;              /* Add left/right padding */
+          overflow: hidden;
+        }
+        #flipping-images-section .flip-card-container {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0;
+          justify-content: center;
+          padding: 0;
+          margin: 0;
+          width: 100%;
+          line-height: 0; /* Eliminate whitespace between inline elements */
+          font-size: 0;
+        }
+        #flipping-images-section .flip-card {
+          background-color: transparent;
+          width: 25%; /* 4 cards per row */
+          aspect-ratio: 1 / 1;
+          perspective: 1000px;
+          cursor: pointer;
+          flex: 0 0 25%;
+          position: relative;
+          margin: 0;
+          padding: 0;
+          font-size: 16px;
+          vertical-align: top;
+        }
+        #flipping-images-section .flip-card-inner {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          transition: transform 0.6s;
+          transform-style: preserve-3d;
+          margin: 0;
+        }
+        #flipping-images-section .flip-card.flipped .flip-card-inner {
+          transform: rotateY(180deg);
+        }
+        #flipping-images-section .flip-card-front,
+        #flipping-images-section .flip-card-back {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          backface-visibility: hidden;
+          overflow: hidden;
+          margin: 0;
+          padding: 0;
+        }
+        #flipping-images-section .flip-card-front {
+          z-index: 2;
+        }
+        #flipping-images-section .flip-card-back {
+          transform: rotateY(180deg);
+          z-index: 1;
+          position: relative;
+        }
+        #flipping-images-section .input-label {
+          position: absolute;
+          top: 10px;
+          left: 10px;
+          background-color: rgba(0, 0, 0, 0.5);
+          color: white;
+          padding: 10px 8px;
+          border-radius: 4px;
+          font-size: 12px;
+          opacity: 0.8;
+          z-index: 3;
+        }
+        #flipping-images-section figure {
+          margin: 0;
+          padding: 0;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          line-height: 0;
+          position: relative;
+        }
+        #flipping-images-section img {
+          width: 100%;
+          height: auto;
+          object-fit: cover;
+          display: block;
+          margin: 0;
+          padding: 0;
+          border: 0;
+        }
+        #flipping-images-section figcaption {
+          display: block;
+          padding: 8px;
+          font-size: 14px;
+          color: #333;
+          text-align: center;
+          background: #f5f5f5;
+          margin: 0;
+          line-height: normal;
+        }
+        
+        /* New styles for transparent grey overlay on the *back* images */
+        #flipping-images-section .back-image-container {
+          position: relative;
+        }
+        #flipping-images-section .back-image-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(128, 128, 128, 0.7); /* semi-transparent grey */
+          pointer-events: none;
+          z-index: 1;
+        }
+        /* Ensure the image sits below the overlay */
+        #flipping-images-section .flip-card-back figure img {
+          position: relative;
+          z-index: 0;
+        }
+        /* Keep the caption above the overlay */
+        #flipping-images-section .flip-card-back figure figcaption {
+          position: relative;
+          z-index: 2;
+        }
+      </style>
+      <div class="flip-card-container"></div>
+      <script>
+        (function() {
+          const flipCardsData = [
+            { 
+              frontUrl: "static/images/flipping/joint/0_f.png", 
+              frontCaption: "A close-up of a corgi's face with a big smile on red lips, set against a background covered in silly doodles and scribbles.", 
+              backUrl: "static/images/flipping/joint/0_b.png", 
+              backCaption: "A close-up of a corgi's face"
+            },
+            { 
+              frontUrl: "static/images/flipping/joint/1_f.png", 
+              frontCaption: "In a dense forest, a wise old owl and mongoose sit side by side, both supporting a gnarled tree branch.",
+              backUrl: "static/images/flipping/joint/1_b.png", 
+              backCaption: "In a dense forest, a wise old a gnarled tree branch.", 
+            },
+            { 
+              frontUrl: "static/images/flipping/joint/2_f.png", 
+              frontCaption: "A group of hot air balloons float above the Colosseum.",
+              backUrl: "static/images/flipping/joint/2_b.png", 
+              backCaption: "A group of hot above the Colosseum.", 
+            },
+            { 
+              frontUrl: "static/images/flipping/joint/3_f.png", 
+              frontCaption: "tropical fish swimming in shallow coral reef",
+              backUrl: "static/images/flipping/joint/3_b.png", 
+              backCaption: "tropical fish", 
+            },
+            { 
+              frontUrl: "static/images/flipping/t2i/0.png", 
+              frontCaption: "", 
+              backUrl: "static/images/flipping/masked.png", 
+              backCaption: "A dragon with iridescent scales basking in the warm sunlight on a beach.",
+            },
+            { 
+              frontUrl: "static/images/flipping/t2i/1.png", 
+              frontCaption: "", 
+              backUrl: "static/images/flipping/masked.png", 
+              backCaption: "A high-tech motorbike crafted from neon-lit circuit boards and scarlet glass, emitting sparks that resemble a swarm of fireflies.",
+            },
+            { 
+              frontUrl: "static/images/flipping/t2i/2.png", 
+              frontCaption: "", 
+              backUrl: "static/images/flipping/masked.png", 
+              backCaption: "Cel shaded, Planet of the Apes character, minimalist icon",
+            },
+            { 
+              frontUrl: "static/images/flipping/t2i/3.png", 
+              frontCaption: "", 
+              backUrl: "static/images/flipping/masked.png", 
+              backCaption: "A cyberpunk female hacker, dressed in a neon pink hoodie and ripped jeans, poses with a sleek laptop and a futuristic energy blaster, set against a gritty cityscape at night.",
+            },
+            {
+              frontUrl: "static/images/flipping/masked.png", 
+              frontCaption: "A whimsical penguin in a sports outfit, playing with balls and floating above a city skyline, inspired by the steampunk. Inspired by M.C. Escher.", 
+              backUrl: "static/images/flipping/i2t/8-1996.png", 
+              backCaption: "<i>Masked Caption</i>",
+            },
+            { 
+              frontUrl:  "static/images/flipping/masked.png", 
+              frontCaption: "A bright red ceramic cup filled with a vibrant lemonade next to an old fashioned wooden baby wagon in a sunny backyard setting.", 
+              backUrl: "static/images/flipping/i2t/9-1997.png",
+              backCaption: "<i>Masked Caption</i>",
+            },
+            { 
+              frontUrl: "static/images/flipping/masked.png", 
+              frontCaption: "a grove of trees at dusk with scattered branches.", 
+              backUrl: "static/images/flipping/i2t/10-1998.png", 
+              backCaption: "<i>Masked Caption</i>",
+            },
+            { 
+              frontUrl: "static/images/flipping/joint/14_f.png", 
+              frontCaption: "A surrelaist painting of a horse's face, inspired by the works of Salvador Dali", 
+              backUrl: "static/images/flipping/joint/14_b.png", 
+              backCaption: "<i>Masked Caption</i>",
+            },
+            { 
+              frontUrl: "static/images/flipping/joint/17_f.png", 
+              frontCaption: "Medieval-inspired drawing of enraged moths surrounding a medieval knight", 
+              backUrl: "static/images/flipping/joint/17_b.png", 
+              backCaption: "<i>Mask Mask Mask Mask Mask Mask Mask Mask</i> surrounding a medieval knight"
+            },
+            { 
+              frontUrl: "static/images/flipping/joint/18_f.png", 
+              frontCaption: "A group of willow trees surround a tranquil lake on a cloudy day.", 
+              backUrl: "static/images/flipping/joint/18_b.png", 
+              backCaption: "<i>Mask Mask Mask Mask Mask Mask Mask Mask Mask Mask</i> day.",
+            },
+            { 
+              frontUrl: "static/images/flipping/joint/19_f.png", 
+              frontCaption: "The Muse d'Orsay is located on the Seine River in Paris at night, featuring an iconic bridge style building", 
+              backUrl: "static/images/flipping/joint/19_b.png", 
+              backCaption: "The Muse d'Orsay is located on the <i>Mask Mask Mask Mask Mask Mask Mask Mask</i>",
+            },
+          ];
+          
+          const container = document.querySelector('#flipping-images-section .flip-card-container');
+          
+          flipCardsData.forEach(card => {
+            const cardDiv = document.createElement('div');
+            cardDiv.className = 'flip-card';
+            cardDiv.innerHTML = `
+              <div class="flip-card-inner">
+                <div class="flip-card-front">
+                  <figure>
+                    <img src="${card.frontUrl}" alt="Front Image">
+                    ${card.frontCaption ? `<figcaption>${card.frontCaption}</figcaption>` : ''}
+                  </figure>
+                </div>
+                <div class="flip-card-back">
+                  <span class="input-label">Input</span>
+                  <figure>
+                    <div class="back-image-container">
+                      <img src="${card.backUrl}" alt="Back Image">
+                      <div class="back-image-overlay"></div>
+                    </div>
+                    ${card.backCaption ? `<figcaption>${card.backCaption}</figcaption>` : ''}
+                  </figure>
+                </div>
+              </div>
+            `;
+            container.appendChild(cardDiv);
+          });
+          
+          function initFlipCards() {
+            const flipCards = document.querySelectorAll('#flipping-images-section .flip-card');
+            flipCards.forEach(card => {
+              card.addEventListener('click', () => {
+                card.classList.toggle('flipped');
+              });
+            });
+          }
+          
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initFlipCards);
+          } else {
+            initFlipCards();
+          }
+          
+          // Automatic random flipping logic
+          (function autoFlip() {
+            const flipCards = Array.from(document.querySelectorAll('#flipping-images-section .flip-card'));
+            function randomFlipCard() {
+              if (flipCards.length === 0) return;
+              const randomIndex = Math.floor(Math.random() * flipCards.length);
+              const card = flipCards[randomIndex];
+              card.classList.toggle('flipped');
+              setTimeout(randomFlipCard, 3000);
+            }
+            setTimeout(randomFlipCard, 3000);
+          })();
+        })();
+      </script>
+    </section>
 
   <!-- Teaser Image -->
   <section class="hero teaser">
@@ -372,7 +651,7 @@
         transition: background-color 0.1s ease;
       }
       #cached-section .cached-highlighted {
-        background-color: rgba(255, 255, 0, 0.3);
+        background-color: rgba(128, 128, 128, 0.9);
       }
       #cached-section .cached-sentence-builder {
         flex-grow: 1;
@@ -880,265 +1159,6 @@
     </script>
   </section>
 
-  <section id="flipping-images-section">
-    <style>
-      /* Flipping Images Section Styles */
-      #flipping-images-section {
-        font-family: sans-serif;
-        margin: 2rem 0;
-        width: 100%;
-        overflow: hidden;
-      }
-      #flipping-images-section .flip-card-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0;
-        justify-content: center;
-        padding: 0;
-        margin: 0;
-        width: 100%;
-        line-height: 0;
-        font-size: 0; /* Eliminate whitespace between inline elements */
-      }
-      #flipping-images-section .flip-card {
-        background-color: transparent;
-        width: 25%; /* 4 cards per row */
-        aspect-ratio: 1 / 1;
-        perspective: 1000px;
-        cursor: pointer;
-        flex: 0 0 25%;
-        position: relative;
-        margin: 0;
-        padding: 0;
-        font-size: 16px;
-        vertical-align: top;
-      }
-      #flipping-images-section .flip-card-inner {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        transition: transform 0.6s;
-        transform-style: preserve-3d;
-        margin: 0;
-      }
-      #flipping-images-section .flip-card.flipped .flip-card-inner {
-        transform: rotateY(180deg);
-      }
-      #flipping-images-section .flip-card-front,
-      #flipping-images-section .flip-card-back {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        backface-visibility: hidden;
-        overflow: hidden;
-        margin: 0;
-        padding: 0;
-      }
-      #flipping-images-section .flip-card-front {
-        z-index: 2;
-      }
-      #flipping-images-section .flip-card-back {
-        transform: rotateY(180deg);
-        z-index: 1;
-        position: relative;
-      }
-      #flipping-images-section .input-label {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        background-color: rgba(0, 0, 0, 0.5);
-        color: white;
-        padding: 10px 8px;
-        border-radius: 4px;
-        font-size: 12px;
-        opacity: 0.8;
-        z-index: 3;
-      }
-      #flipping-images-section figure {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        line-height: 0;
-      }
-      #flipping-images-section img {
-        width: 100%;
-        height: auto;
-        object-fit: cover;
-        display: block;
-        margin: 0;
-        padding: 0;
-        border: 0;
-      }
-      #flipping-images-section figcaption {
-        display: block;
-        padding: 8px;
-        font-size: 14px;
-        color: #333;
-        text-align: center;
-        background: #f5f5f5;
-        margin: 0;
-        line-height: normal;
-      }
-    </style>
-    <div class="flip-card-container"></div>
-    <script>
-      (function() {
-        const flipCardsData = [
-          { 
-            frontUrl: "static/images/flipping/joint/0_f.png", 
-            frontCaption: "A close-up of a corgi's face with a big smile on red lips, set against a background covered in silly doodles and scribbles.", 
-            backUrl: "static/images/flipping/joint/0_b.png", 
-            backCaption: "A close-up of a corgi's face"
-          },
-          { 
-            frontUrl: "static/images/flipping/joint/1_f.png", 
-            frontCaption: "In a dense forest, a wise old owl and mongoose sit side by side, both supporting a gnarled tree branch.",
-            backUrl: "static/images/flipping/joint/1_b.png", 
-            backCaption: "In a dense forest, a wise old a gnarled tree branch.", 
-          },
-          { 
-            frontUrl: "static/images/flipping/joint/2_f.png", 
-            frontCaption: "A group of hot air balloons float above the Colosseum.",
-            backUrl: "static/images/flipping/joint/2_b.png", 
-            backCaption: "A group of hot above the Colosseum.", 
-          },
-          { 
-            frontUrl: "static/images/flipping/joint/3_f.png", 
-            frontCaption: "tropical fish swimming in shallow coral reef",
-            backUrl: "static/images/flipping/joint/3_b.png", 
-            backCaption: "tropical fish", 
-          },
-          { 
-            frontUrl: "static/images/flipping/t2i/0.png", 
-            frontCaption: "", 
-            backUrl: "static/images/flipping/masked.png", 
-            backCaption: "A dragon with iridescent scales basking in the warm sunlight on a beach.",
-          },
-          { 
-            frontUrl: "static/images/flipping/t2i/1.png", 
-            frontCaption: "", 
-            backUrl: "static/images/flipping/masked.png", 
-            backCaption: "A high-tech motorbike crafted from neon-lit circuit boards and scarlet glass, emitting sparks that resemble a swarm of fireflies.",
-          },
-          { 
-            frontUrl: "static/images/flipping/t2i/2.png", 
-            frontCaption: "", 
-            backUrl: "static/images/flipping/masked.png", 
-            backCaption: "Cel shaded, Planet of the Apes character, minimalist icon",
-          },
-          { 
-            frontUrl: "static/images/flipping/t2i/3.png", 
-            frontCaption: "", 
-            backUrl: "static/images/flipping/masked.png", 
-            backCaption: "A cyberpunk female hacker, dressed in a neon pink hoodie and ripped jeans, poses with a sleek laptop and a futuristic energy blaster, set against a gritty cityscape at night.",
-          },
-          {
-            frontUrl: "static/images/flipping/masked.png", 
-            frontCaption: "A whimsical penguin in a sports outfit, playing with balls and floating above a city skyline, inspired by the steampunk. Inspired by M.C. Escher.", 
-            backUrl: "static/images/flipping/i2t/8-1996.png", 
-            backCaption: "<i>Masked Caption</i>",
-          },
-          { 
-            frontUrl:  "static/images/flipping/masked.png", 
-            frontCaption: "A bright red ceramic cup filled with a vibrant lemonade next to an old fashioned wooden baby wagon in a sunny backyard setting.", 
-            backUrl: "static/images/flipping/i2t/9-1997.png",
-            backCaption: "<i>Masked Caption</i>",
-          },
-          { 
-            frontUrl: "static/images/flipping/masked.png", 
-            frontCaption: "a grove of trees at dusk with scattered branches.", 
-            backUrl: "static/images/flipping/i2t/10-1998.png", 
-            backCaption: "<i>Masked Caption</i>",
-          },
-          { 
-            frontUrl: "static/images/flipping/joint/14_f.png", 
-            frontCaption: "A surrelaist painting of a horse's face, inspired by the works of Salvador Dali", 
-            backUrl: "static/images/flipping/joint/14_b.png", 
-            backCaption: "<i>Masked Caption</i>",
-          },
-          { 
-            frontUrl: "static/images/flipping/joint/17_f.png", 
-            frontCaption: "Medieval-inspired drawing of enraged moths surrounding a medieval knight", 
-            backUrl: "static/images/flipping/joint/17_b.png", 
-            backCaption: "<i>Mask Mask Mask Mask Mask Mask Mask Mask</i> surrounding a medieval knight"
-          },
-          { 
-            frontUrl: "static/images/flipping/joint/18_f.png", 
-            frontCaption: "A group of willow trees surround a tranquil lake on a cloudy day.", 
-            backUrl: "static/images/flipping/joint/18_b.png", 
-            backCaption: "<i>Mask Mask Mask Mask Mask Mask Mask Mask Mask Mask</i> day.",
-          },
-          { 
-            frontUrl: "static/images/flipping/joint/19_f.png", 
-            frontCaption: "The Muse d'Orsay is located on the Seine River in Paris at night, featuring an iconic bridge style building", 
-            backUrl: "static/images/flipping/joint/19_b.png", 
-            backCaption: "The Muse d'Orsay is located on the <i>Mask Mask Mask Mask Mask Mask Mask Mask</i>",
-          },
-        ];
-        
-        const container = document.querySelector('#flipping-images-section .flip-card-container');
-        
-        // Dynamically generate an HTML flip card for each element in the flipCardsData array.
-        flipCardsData.forEach(card => {
-          const cardDiv = document.createElement('div');
-          cardDiv.className = 'flip-card';
-          cardDiv.innerHTML = `
-            <div class="flip-card-inner">
-              <div class="flip-card-front">
-                <figure>
-                  <img src="${card.frontUrl}" alt="Front Image">
-                  ${card.frontCaption ? `<figcaption>${card.frontCaption}</figcaption>` : ''}
-                </figure>
-              </div>
-              <div class="flip-card-back">
-                <span class="input-label">Input</span>
-                <figure>
-                  <img src="${card.backUrl}" alt="Back Image">
-                  ${card.backCaption ? `<figcaption>${card.backCaption}</figcaption>` : ''}
-                </figure>
-              </div>
-            </div>
-          `;
-          container.appendChild(cardDiv);
-        });
-        
-        // Attach click event listeners to each flip card so that it toggles flipping behavior.
-        function initFlipCards() {
-          const flipCards = document.querySelectorAll('#flipping-images-section .flip-card');
-          flipCards.forEach(card => {
-            card.addEventListener('click', () => {
-              card.classList.toggle('flipped');
-            });
-          });
-        }
-        
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', initFlipCards);
-        } else {
-          initFlipCards();
-        }
-        
-        // --- Automatic random flipping logic ---
-        (function autoFlip() {
-          const flipCards = Array.from(document.querySelectorAll('#flipping-images-section .flip-card'));
-          
-          function randomFlipCard() {
-            if (flipCards.length === 0) return;
-            const randomIndex = Math.floor(Math.random() * flipCards.length);
-            const card = flipCards[randomIndex];
-            card.classList.toggle('flipped');
-            setTimeout(randomFlipCard, 3000);
-          }
-          
-          setTimeout(randomFlipCard, 3000);
-        })();
-      })();
-    </script>
-  </section>
-
   <section class="hero is-small pt-6 pb-3">
     <div class="hero-body">
       <div class="container">
@@ -1149,7 +1169,7 @@
           </a>
         </h2>
         <div class="columns is-centered" style="padding-top: 20px;">
-          <div class="column is-full has-text-centered">
+          <div class="column is-five-sixths has-text-centered">
             <picture>
               <source srcset="static/images/unidisc_diagram_v1_crop.webp" type="image/webp">
               <img src="static/images/unidisc_diagram_v1_crop.webp" alt="Modality Plot">
@@ -1225,7 +1245,7 @@
         </div>
 
         <div class="columns is-centered" style="margin-top: 3rem;">
-          <div class="column is-full has-text-centered">
+          <div class="column is-five-sixths has-text-centered">
             <h3 class="subtitle" style="margin-bottom: 2.0rem;">Uniform Concept Generation</h3>
             <picture>
               <source srcset="static/images/seg_viz_v2.webp" type="image/webp">
@@ -1251,7 +1271,7 @@
           </a>
         </h2>
         <div class="columns is-centered" style="margin-top: 2rem;">
-          <div class="column is-full has-text-centered">
+          <div class="column is-five-sixths has-text-centered">
             <div style="display: flex; justify-content: center; gap: 1px;">
               <picture>
                 <source srcset="static/images/cfg_fid.webp" type="image/webp">
@@ -1277,11 +1297,11 @@
             <i class="fas fa-link"></i>
           </a>
         </h2>
-        <div class="column is-full has-text-centered">
+        <div class="column is-five-sixths has-text-centered">
           <p style="margin-bottom: 3rem; margin-top: -3.0rem;">L2 distance between unconditional and conditional logits over the course of generation.</p>
         </div>
         <div class="columns is-centered">
-          <div class="column is-full has-text-centered">
+          <div class="column is-five-sixths has-text-centered">
             <h3 class="subtitle">Qualitative Effect of Classifier-Free Guidance</h3>
             <picture>
               <source srcset="static/images/cfg_v3.webp" type="image/webp">
