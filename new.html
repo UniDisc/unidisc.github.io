@@ -169,7 +169,7 @@
 
     <!-- Header Section -->
     <section class="hero">
-      <div class="hero-body">
+      <div class="hero-body" style="padding-bottom: 1.5rem;">
         <div class="container is-max-desktop">
           <div class="columns is-centered">
             <div class="column has-text-centered">
@@ -244,8 +244,8 @@
         #flipping-images-section {
           font-family: sans-serif;
           margin: 2rem auto;            /* Center the section vertically */
-          max-width: 1050px;            /* Constrain width similar to other sections */
-          padding: 0 20px;              /* Add left/right padding */
+          max-width: 100%;              /* Make it full screen width */
+          padding: 0 0px;              /* Add left/right padding */
           overflow: hidden;
         }
         #flipping-images-section .flip-card-container {
@@ -261,11 +261,11 @@
         }
         #flipping-images-section .flip-card {
           background-color: transparent;
-          width: 25%; /* 4 cards per row */
-          aspect-ratio: 1 / 1;
+          width: 20%; /* 5 cards per row */
+          aspect-ratio: 520/720; /* Match image dimensions */
           perspective: 1000px;
           cursor: pointer;
-          flex: 0 0 25%;
+          flex: 0 0 20%;
           position: relative;
           margin: 0;
           padding: 0;
@@ -325,8 +325,8 @@
         }
         #flipping-images-section img {
           width: 100%;
-          height: auto;
-          object-fit: cover;
+          height: 100%;
+          object-fit: contain; /* Changed from cover to contain */
           display: block;
           margin: 0;
           padding: 0;
@@ -346,6 +346,7 @@
         /* New styles for transparent grey overlay on the *back* images */
         #flipping-images-section .back-image-container {
           position: relative;
+          height: 100%;
         }
         #flipping-images-section .back-image-overlay {
           position: absolute;
@@ -373,97 +374,106 @@
         (function() {
           const flipCardsData = [
             { 
-              frontUrl: "static/images/flipping/joint/0_f.png", 
-              frontCaption: "A close-up of a corgi's face with a big smile on red lips, set against a background covered in silly doodles and scribbles.", 
-              backUrl: "static/images/flipping/joint/0_b.png", 
-              backCaption: "A close-up of a corgi's face"
-            },
-            { 
-              frontUrl: "static/images/flipping/joint/1_f.png", 
-              frontCaption: "In a dense forest, a wise old owl and mongoose sit side by side, both supporting a gnarled tree branch.",
-              backUrl: "static/images/flipping/joint/1_b.png", 
-              backCaption: "In a dense forest, a wise old a gnarled tree branch.", 
-            },
-            { 
-              frontUrl: "static/images/flipping/joint/2_f.png", 
-              frontCaption: "A group of hot air balloons float above the Colosseum.",
-              backUrl: "static/images/flipping/joint/2_b.png", 
-              backCaption: "A group of hot above the Colosseum.", 
-            },
-            { 
-              frontUrl: "static/images/flipping/joint/3_f.png", 
-              frontCaption: "tropical fish swimming in shallow coral reef",
-              backUrl: "static/images/flipping/joint/3_b.png", 
-              backCaption: "tropical fish", 
-            },
-            { 
-              frontUrl: "static/images/flipping/t2i/0.png", 
+              frontUrl: "static/images/unidisc_main/unidisc_main.002.jpeg", 
               frontCaption: "", 
-              backUrl: "static/images/flipping/masked.png", 
-              backCaption: "A dragon with iridescent scales basking in the warm sunlight on a beach.",
+              backUrl: "static/images/unidisc_main/unidisc_main.001.jpeg", 
+              backCaption: ""
             },
             { 
-              frontUrl: "static/images/flipping/t2i/1.png", 
-              frontCaption: "", 
-              backUrl: "static/images/flipping/masked.png", 
-              backCaption: "A high-tech motorbike crafted from neon-lit circuit boards and scarlet glass, emitting sparks that resemble a swarm of fireflies.",
+              frontUrl: "static/images/unidisc_main/unidisc_main.004.jpeg", 
+              frontCaption: "",
+              backUrl: "static/images/unidisc_main/unidisc_main.003.jpeg", 
+              backCaption: "", 
             },
             { 
-              frontUrl: "static/images/flipping/t2i/2.png", 
-              frontCaption: "", 
-              backUrl: "static/images/flipping/masked.png", 
-              backCaption: "Cel shaded, Planet of the Apes character, minimalist icon",
+              frontUrl: "static/images/unidisc_main/unidisc_main.006.jpeg", 
+              frontCaption: "",
+              backUrl: "static/images/unidisc_main/unidisc_main.005.jpeg", 
+              backCaption: "", 
             },
             { 
-              frontUrl: "static/images/flipping/t2i/3.png", 
+              frontUrl: "static/images/unidisc_main/unidisc_main.008.jpeg", 
+              frontCaption: "",
+              backUrl: "static/images/unidisc_main/unidisc_main.007.jpeg", 
+              backCaption: "", 
+            },
+            { 
+              frontUrl: "static/images/unidisc_main/unidisc_main.010.jpeg", 
               frontCaption: "", 
-              backUrl: "static/images/flipping/masked.png", 
-              backCaption: "A cyberpunk female hacker, dressed in a neon pink hoodie and ripped jeans, poses with a sleek laptop and a futuristic energy blaster, set against a gritty cityscape at night.",
+              backUrl: "static/images/unidisc_main/unidisc_main.009.jpeg", 
+              backCaption: "",
+            },
+            { 
+              frontUrl: "static/images/unidisc_main/unidisc_main.012.jpeg", 
+              frontCaption: "", 
+              backUrl: "static/images/unidisc_main/unidisc_main.011.jpeg", 
+              backCaption: "",
+            },
+            { 
+              frontUrl: "static/images/unidisc_main/unidisc_main.014.jpeg", 
+              frontCaption: "", 
+              backUrl: "static/images/unidisc_main/unidisc_main.013.jpeg", 
+              backCaption: "",
+            },
+            { 
+              frontUrl: "static/images/unidisc_main/unidisc_main.016.jpeg", 
+              frontCaption: "", 
+              backUrl: "static/images/unidisc_main/unidisc_main.015.jpeg", 
+              backCaption: "",
             },
             {
-              frontUrl: "static/images/flipping/masked.png", 
-              frontCaption: "A whimsical penguin in a sports outfit, playing with balls and floating above a city skyline, inspired by the steampunk. Inspired by M.C. Escher.", 
-              backUrl: "static/images/flipping/i2t/8-1996.png", 
-              backCaption: "<i>Masked Caption</i>",
+              frontUrl: "static/images/unidisc_main/unidisc_main.018.jpeg", 
+              frontCaption: "", 
+              backUrl: "static/images/unidisc_main/unidisc_main.017.jpeg", 
+              backCaption: "",
             },
             { 
-              frontUrl:  "static/images/flipping/masked.png", 
-              frontCaption: "A bright red ceramic cup filled with a vibrant lemonade next to an old fashioned wooden baby wagon in a sunny backyard setting.", 
-              backUrl: "static/images/flipping/i2t/9-1997.png",
-              backCaption: "<i>Masked Caption</i>",
+              frontUrl:  "static/images/unidisc_main/unidisc_main.020.jpeg", 
+              frontCaption: "", 
+              backUrl: "static/images/unidisc_main/unidisc_main.019.jpeg",
+              backCaption: "",
             },
             { 
-              frontUrl: "static/images/flipping/masked.png", 
-              frontCaption: "a grove of trees at dusk with scattered branches.", 
-              backUrl: "static/images/flipping/i2t/10-1998.png", 
-              backCaption: "<i>Masked Caption</i>",
+              frontUrl: "static/images/unidisc_main/unidisc_main.022.jpeg", 
+              frontCaption: "", 
+              backUrl: "static/images/unidisc_main/unidisc_main.021.jpeg", 
+              backCaption: "",
             },
             { 
-              frontUrl: "static/images/flipping/joint/14_f.png", 
-              frontCaption: "A surrelaist painting of a horse's face, inspired by the works of Salvador Dali", 
-              backUrl: "static/images/flipping/joint/14_b.png", 
-              backCaption: "<i>Masked Caption</i>",
+              frontUrl: "static/images/unidisc_main/unidisc_main.024.jpeg", 
+              frontCaption: "", 
+              backUrl: "static/images/unidisc_main/unidisc_main.023.jpeg", 
+              backCaption: "",
             },
             { 
-              frontUrl: "static/images/flipping/joint/17_f.png", 
-              frontCaption: "Medieval-inspired drawing of enraged moths surrounding a medieval knight", 
-              backUrl: "static/images/flipping/joint/17_b.png", 
-              backCaption: "<i>Mask Mask Mask Mask Mask Mask Mask Mask</i> surrounding a medieval knight"
+              frontUrl: "static/images/unidisc_main/unidisc_main.026.jpeg", 
+              frontCaption: "", 
+              backUrl: "static/images/unidisc_main/unidisc_main.025.jpeg", 
+              backCaption: ""
             },
             { 
-              frontUrl: "static/images/flipping/joint/18_f.png", 
-              frontCaption: "A group of willow trees surround a tranquil lake on a cloudy day.", 
-              backUrl: "static/images/flipping/joint/18_b.png", 
-              backCaption: "<i>Mask Mask Mask Mask Mask Mask Mask Mask Mask Mask</i> day.",
+              frontUrl: "static/images/unidisc_main/unidisc_main.028.jpeg", 
+              frontCaption: "", 
+              backUrl: "static/images/unidisc_main/unidisc_main.027.jpeg", 
+              backCaption: "",
             },
             { 
-              frontUrl: "static/images/flipping/joint/19_f.png", 
-              frontCaption: "The Muse d'Orsay is located on the Seine River in Paris at night, featuring an iconic bridge style building", 
-              backUrl: "static/images/flipping/joint/19_b.png", 
-              backCaption: "The Muse d'Orsay is located on the <i>Mask Mask Mask Mask Mask Mask Mask Mask</i>",
-            },
+              frontUrl: "static/images/unidisc_main/unidisc_main.030.jpeg", 
+              frontCaption: "", 
+              backUrl: "static/images/unidisc_main/unidisc_main.029.jpeg", 
+              backCaption: "",
+            }
+            // ,
+            // { 
+            //   frontUrl: "static/images/flipping/joint/19_f.png", 
+            //   frontCaption: "", 
+            //   backUrl: "static/images/flipping/joint/19_b.png", 
+            //   backCaption: "",
+            // }            
           ];
-          
+
+          // Randomize the order of flipCardsData
+          flipCardsData.sort(() => Math.random() - 0.5);
           const container = document.querySelector('#flipping-images-section .flip-card-container');
           
           flipCardsData.forEach(card => {
@@ -524,10 +534,9 @@
     </section>
 
   <!-- Teaser Image -->
-  <section class="hero teaser">
+  <!-- <section class="hero teaser">
     <div class="container is-max-desktop">
       <div class="hero-body">
-        <!-- <img src="static/images/joint_inpaint.webp" alt="Joint Inpainting"> -->
         <picture>
           <source srcset="static/images/main_fidelity.webp" type="image/webp">
           <img src="static/images/main_fidelity.webp" alt="Joint Inpainting">
@@ -539,7 +548,7 @@
         </h2>
       </div>
     </div>
-  </section>
+  </section> -->
 
   <!-- Abstract -->
   <section class="section hero is-light">
