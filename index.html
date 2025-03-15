@@ -155,6 +155,40 @@
       width: 512px;
       height: 512px;
     } 
+
+    /* Add styles for the reset buttons */
+    #cached-section .cached-reset-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      justify-content: center;
+    }
+
+    #cached-section .cached-reset-button {
+      padding: 8px 15px;
+      background-color: #f5f5f5;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s ease;
+    }
+
+    #cached-section .cached-reset-button:hover {
+      background-color: #e0e0e0;
+    }
+
+    /* Add styles for the grey overlay */
+    #cached-section .cached-grey-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #888888; /* Solid grey color */
+      z-index: 10; /* Ensure it's above the grid */
+      display: none; /* Initially hidden */
+    }
   </style>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -657,8 +691,8 @@
         width: 100%;
         height: 100%;
         display: grid;
-        grid-template-columns: repeat(8, 1fr);
-        grid-template-rows: repeat(8, 1fr);
+        grid-template-columns: repeat(5, 1fr);
+        grid-template-rows: repeat(5, 1fr);
       }
       #cached-section .cached-grid-cell {
         border: 1px solid black;
@@ -716,7 +750,13 @@
       <div class="cached-left-container">
         <div class="cached-grid-container">
           <img src="static/images/fergus.png" alt="Grid Image" class="cached-image">
-          <div id="cached-grid" class="cached-grid">
+          <div id="cached-grid" class="cached-grid"></div>
+          <!-- Add grey overlay div -->
+          <div id="cached-grey-overlay" class="cached-grey-overlay"></div>
+          <!-- Add reset buttons below the image -->
+          <div class="cached-reset-buttons">
+            <button id="cached-reset-image" class="cached-reset-button">Reset Image</button>
+            <button id="cached-remove-image" class="cached-reset-button">Remove Image</button>
           </div>
         </div>
       </div>
@@ -733,7 +773,7 @@
           <span class="cached-word-option" data-row="1" data-word="happy puppy">happy puppy</span>
           <span class="cached-word-option" data-row="1" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
         </div>
-        <div class="cached-sentence-row">
+        <!-- <div class="cached-sentence-row">
           <span class="cached-word-option" data-row="2" data-word="is always">is always</span>
           <span class="cached-word-option" data-row="2" data-word="was just">was just</span>
           <span class="cached-word-option" data-row="2" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
@@ -752,7 +792,7 @@
           <span class="cached-word-option" data-row="5" data-word="cozy home">cozy home</span>
           <span class="cached-word-option" data-row="5" data-word="sunny park">sunny park</span>
           <span class="cached-word-option" data-row="5" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
-        </div>
+        </div> -->
         <div id="cached-current-sentence">Click word pairs above to build your sentence!</div>
         <div id="cached-response-text"></div>
       </div>
@@ -798,8 +838,8 @@
             use_reward_models: false
         };
 
-        const GRID_SIZE = 8; // GRID_SIZE x GRID_SIZE.
-        const MASK_SIZE = 5; // Change this number for a different mask size.
+        const GRID_SIZE = 5; // GRID_SIZE x GRID_SIZE.
+        const MASK_SIZE = 4; // Change this number for a different mask size.
         
         // --- Utility functions ---
         async function processImage(imageBytes) {
@@ -830,10 +870,10 @@
             const imageData = ctx.createImageData(cols, rows);
             maskArray.flat().forEach((val, i) => {
                 const color = val ? 255 : 0;
-                imageData.data[i * 4]     = color;
-                imageData.data[i * 4 + 1] = color;
-                imageData.data[i * 4 + 2] = color;
-                imageData.data[i * 4 + 3] = color;
+                imageData.data[i * (MASK_SIZE - 1)]     = color;
+                imageData.data[i * (MASK_SIZE - 1) + 1] = color;
+                imageData.data[i * (MASK_SIZE - 1) + 2] = color;
+                imageData.data[i * (MASK_SIZE - 1) + 3] = color;
             });
             ctx.putImageData(imageData, 0, 0);
         
@@ -845,39 +885,48 @@
             };
         }
         
+        let isImageRemoved = false; // Add flag to track if image is removed
+        
         async function callUnidiscAPI(imageBlob, maskArray, sentence) {
             // Replace <mask> with <m> for API call
             const apiSentence = sentence.replace(/<mask>/g, "<m>");
-            
             console.log("Called API with sentence: ", apiSentence);
             const messages = [{
                 role: "user",
                 content: [
                     { type: "text", text: apiSentence }
                 ]
-            }];
-        
+              },
+              {
+                  role: "assistant",
+                  content: [
+                  ]
+              }
+            ];
             // Check if we need to include the image and mask
             const hasMaskedText = apiSentence.includes("<m>");
             const hasMaskedImage = maskArray && maskArray.some(row => row.some(cell => cell === true));
-            
-            // Only include image and mask if needed
-            if (hasMaskedText || hasMaskedImage) {
+
+            let imageBase64;
+            let maskData;
+
+            // Only include image and mask if needed AND image is not removed
+            if ((hasMaskedText || hasMaskedImage) && !isImageRemoved) {
                 const resizedImage = await processImage(await imageBlob.arrayBuffer());
-                const imageBase64 = await new Promise(resolve => {
+                imageBase64 = await new Promise(resolve => {
                     const reader = new FileReader();
                     reader.onload = () => resolve(reader.result);
                     reader.readAsDataURL(resizedImage);
                 });
-                messages[0].content.push({
+                messages[1].content.push({
                     type: "image_url",
                     image_url: { url: imageBase64 },
                     is_mask: false
                 });
-        
+
                 if (maskArray) {
-                    const maskData = encodeMask(maskArray);
-                    messages[0].content.push({
+                    maskData = encodeMask(maskArray);
+                    messages[1].content.push({
                         type: "image_url",
                         image_url: {
                             url: `data:image/png;base64,${maskData.data}`,
@@ -890,17 +939,87 @@
                     });
                 }
             }
-        
+
+            if (messages.length > 0 && 
+                messages[messages.length - 1].role === 'assistant' && 
+                (!messages[messages.length - 1].content || 
+                 messages[messages.length - 1].content.length === 0)) {
+                
+                console.log("Removing empty assistant message");
+                messages.pop(); // Remove the empty assistant message
+            }
+
+            // Create the payload without the hash first
             const payload = {
                 messages,
                 model: "unidisc",
                 ...HARDCODED_CONFIG
             };
-        
+
+            // Caching logic - hash the entire request payload
+            let hash = null;
+            try {
+                const payloadString = JSON.stringify(payload);
+                const encoder = new TextEncoder();
+                const data = encoder.encode(payloadString);
+                
+                if (typeof crypto !== 'undefined' && crypto.subtle) {
+                    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+                    const hashArray = Array.from(new Uint8Array(hashBuffer));
+                    hash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+                    console.log("Hash generated from full payload:", hash);
+                } else {
+                    throw new Error('Web Crypto API is not available. Please ensure you are serving your page over HTTPS or via localhost.');
+                }
+            } catch (error) {
+                console.error('Error generating hash:', error);
+            }
+
+            try {
+                // Check cache using the hash
+                if (hash) {
+                    try {
+                        const response = await fetch(`https://grafana.aswerdlow.com/${hash}.json`, {
+                            mode: 'cors', // Explicitly request CORS mode
+                            headers: {
+                                'Accept': 'application/json'
+                            }
+                        });
+                        if (response.ok) {
+                            const jsonContent = await response.text();
+                            console.log("Cache hit!");
+                            const cachedData = JSON.parse(jsonContent);
+                            console.log("Cached data: ", cachedData);
+                            return {
+                                choices: [{
+                                    index: 0,
+                                    message: cachedData,
+                                    finish_reason: "stop"
+                                }]
+                            };
+                        }
+                    } catch (cacheError) {
+                        // Log the cache error but continue with regular API call
+                        console.log("Cache access failed:", cacheError);
+                        console.log("Proceeding with direct API call");
+                    }
+                }
+            } catch (error) {
+                console.log("Cache miss:", error)
+            }
+
+            console.log("Hash: ", hash);
+
+            if (hash) {
+                payload.request_hash = hash;
+            }
+
+            console.log("Payload: ", payload);
+
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
-                    headers: { 
+                    headers: {
                         'Content-Type': 'application/json',
                         'Access-Control-Allow-Origin': '*',
                         'Access-Control-Allow-Methods': 'POST, OPTIONS',
@@ -908,9 +1027,11 @@
                     },
                     body: JSON.stringify(payload)
                 });
-        
                 if (!response.ok) throw new Error(`API Error: ${response.status}`);
-                return await response.json();
+                  const data = await response.json()
+                
+                console.log("Response: ", data);
+                return data;
             } catch (error) {
                 console.error('API call failed:', error);
                 throw error;
@@ -962,13 +1083,17 @@
         const selectedWords = new Array(6).fill(null);
         
         // Add default selections
+        // const defaultSelections = [
+        //     "the playful",
+        //     "happy puppy",
+        //     "is always",
+        //     "playing around",
+        //     "in the",
+        //     "sunny park"
+        // ];
         const defaultSelections = [
             "the playful",
             "happy puppy",
-            "is always",
-            "playing around",
-            "in the",
-            "sunny park"
         ];
 
         // Initialize with default selections
@@ -1029,6 +1154,7 @@
                 const img = section.querySelector('.cached-image');
                 const currentSentence = section.querySelector('#cached-current-sentence');
                 const responseText = section.querySelector('#cached-response-text');
+                const greyOverlay = section.querySelector('#cached-grey-overlay'); // Get the overlay
 
                 let maskArray = null;
                 
@@ -1053,8 +1179,13 @@
                 responseText.style.display = 'block';
                 responseText.textContent = 'Processing your request...';
                 
+                console.log("sentence: ", sentence);
                 const response = await callUnidiscAPI(imageBlob, maskArray, sentence);
 
+                // Always remove the grey overlay when a response comes in
+                greyOverlay.style.display = "none";
+                isImageRemoved = false; // Reset the image removed flag
+                
                 const message = response.choices?.[0]?.message;
                 if (!message) {
                     throw new Error("No message found in the API response");
@@ -1169,6 +1300,45 @@
         
         // Initialize highlighting with default values.
         highlightCells(1, 1);
+
+        // Add event listeners for the reset buttons
+        const resetImageButton = section.querySelector('#cached-reset-image');
+        const removeImageButton = section.querySelector('#cached-remove-image');
+        const greyOverlay = section.querySelector('#cached-grey-overlay');
+        const originalImageSrc = "static/images/fergus.png"; // Store the original image source
+        
+        // Reset image button functionality
+        resetImageButton.addEventListener('click', () => {
+          const img = section.querySelector('.cached-image');
+          img.src = originalImageSrc;
+          img.style.filter = "none"; // Clear any filters
+          isImageRemoved = false; // Reset the image removed flag
+          
+          // Hide the grey overlay
+          greyOverlay.style.display = "none";
+          
+          // Also clear the mask when resetting the image
+          maskLocked = false;
+          activeMask = null;
+          cells.forEach(cell => cell.classList.remove('cached-highlighted'));
+          
+          // Reset the response text
+          const responseText = section.querySelector('#cached-response-text');
+          responseText.style.display = 'none';
+          section.querySelector('#cached-current-sentence').style.display = 'block';
+        });
+        
+        // Remove image button functionality
+        removeImageButton.addEventListener('click', () => {
+          // Show the solid grey overlay
+          greyOverlay.style.display = "block";
+          isImageRemoved = true; // Set flag to indicate image is removed
+          
+          // Clear any active mask
+          maskLocked = false;
+          activeMask = null;
+          cells.forEach(cell => cell.classList.remove('cached-highlighted'));
+        });
       })();
     </script>
   </section>
@@ -1575,6 +1745,7 @@
         }
       });
     });
+
 
 
     document.addEventListener('DOMContentLoaded', function() {
