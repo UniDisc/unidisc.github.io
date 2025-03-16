@@ -644,11 +644,11 @@
   </section> -->
 
   <!-- TODO: Remove. -->
-  <div id="dev-url-selector" style="text-align: center; margin-bottom: 10px; padding: 10px; background-color: #f8f8f8; border-radius: 4px;">
+  <!-- <div id="dev-url-selector" style="text-align: center; margin-bottom: 10px; padding: 10px; background-color: #f8f8f8; border-radius: 4px;">
     <span style="font-size: 12px; color: #666;">SERVER: </span>
     <button id="prod-server-btn" class="button is-small is-primary">Older</button>
     <button id="dev-server-btn" class="button is-small">Newer</button>
-  </div>
+  </div> -->
 
   <!-- cached-section starts here -->
   <section id="cached-section" class="section">
@@ -804,29 +804,29 @@
       (() => {
 
         let API_URL = "https://rerun.aswerdlow.com/v1/chat/completions"; // Production URL
-        const DEV_API_URL = "https://grafana.aswerdlow.com/v1/chat/completions"; // Dev URL
+        // const DEV_API_URL = "https://grafana.aswerdlow.com/v1/chat/completions"; // Dev URL
         
-        // Add URL selector functionality
-        const devUrlSelector = document.getElementById('dev-url-selector');
-        const prodServerBtn = document.getElementById('prod-server-btn');
-        const devServerBtn = document.getElementById('dev-server-btn');
+        // // Add URL selector functionality
+        // const devUrlSelector = document.getElementById('dev-url-selector');
+        // const prodServerBtn = document.getElementById('prod-server-btn');
+        // const devServerBtn = document.getElementById('dev-server-btn');
         
-        // Only initialize if the elements exist (for easy disabling)
-        if (devUrlSelector && prodServerBtn && devServerBtn) {
-          prodServerBtn.addEventListener('click', () => {
-            API_URL = API_URL;
-            prodServerBtn.classList.add('is-primary');
-            devServerBtn.classList.remove('is-primary');
-            console.log("Using production server:", API_URL);
-          });
+        // // Only initialize if the elements exist (for easy disabling)
+        // if (devUrlSelector && prodServerBtn && devServerBtn) {
+        //   prodServerBtn.addEventListener('click', () => {
+        //     API_URL = API_URL;
+        //     prodServerBtn.classList.add('is-primary');
+        //     devServerBtn.classList.remove('is-primary');
+        //     console.log("Using production server:", API_URL);
+        //   });
           
-          devServerBtn.addEventListener('click', () => {
-            API_URL = DEV_API_URL;
-            devServerBtn.classList.add('is-primary');
-            prodServerBtn.classList.remove('is-primary');
-            console.log("Using development server:", API_URL);
-          });
-        }
+        //   devServerBtn.addEventListener('click', () => {
+        //     API_URL = DEV_API_URL;
+        //     devServerBtn.classList.add('is-primary');
+        //     prodServerBtn.classList.remove('is-primary');
+        //     console.log("Using development server:", API_URL);
+        //   });
+        // }
 
         const HARDCODED_CONFIG = {
             temperature: 0.9,
@@ -1128,7 +1128,7 @@
         //     "in the",
         //     "sunny park"
         // ];
-        
+
         const defaultSelections = [
             "the playful",
             "happy puppy",
