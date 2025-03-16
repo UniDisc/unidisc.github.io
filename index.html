@@ -756,9 +756,9 @@
           <div id="cached-grey-overlay" class="cached-grey-overlay"></div>
           <!-- Add reset buttons below the image -->
           <div class="cached-reset-buttons">
-            <button id="cached-reset-image" class="cached-reset-button">Reset Image</button>
-            <button id="cached-remove-image" class="cached-reset-button">Remove Image</button>
-            <button id="cached-manual-api-call" class="cached-reset-button">Manual API Call</button>
+            <button id="cached-reset-image" class="cached-reset-button">Restore Image</button>
+            <button id="cached-remove-image" class="cached-reset-button">T2I (Remove Image)</button>
+            <!-- <button id="cached-manual-api-call" class="cached-reset-button">Manual API Call</button> -->
           </div>
         </div>
       </div>
@@ -1377,7 +1377,7 @@
         // Add event listeners for the reset buttons
         const resetImageButton = section.querySelector('#cached-reset-image');
         const removeImageButton = section.querySelector('#cached-remove-image');
-        const manualApiCallButton = section.querySelector('#cached-manual-api-call'); // Add reference to the new button
+        // const manualApiCallButton = section.querySelector('#cached-manual-api-call'); // Add reference to the new button
         const greyOverlay = section.querySelector('#cached-grey-overlay');
         const originalImageSrc = "static/images/fergus.png"; // Store the original image source
         
@@ -1415,18 +1415,18 @@
         });
 
         // Manual API call button functionality
-        manualApiCallButton.addEventListener('click', async () => {
-          try {
-            await updateImage();
-          } catch (error) {
-            console.error('Manual API call failed:', error);
-            // Show error in the response text
-            const responseText = section.querySelector('#cached-response-text');
-            responseText.textContent = 'Error making manual API call: ' + error.message;
-            responseText.style.display = 'block';
-            section.querySelector('#cached-current-sentence').style.display = 'none';
-          }
-        });
+        // manualApiCallButton.addEventListener('click', async () => {
+        //   try {
+        //     await updateImage();
+        //   } catch (error) {
+        //     console.error('Manual API call failed:', error);
+        //     // Show error in the response text
+        //     const responseText = section.querySelector('#cached-response-text');
+        //     responseText.textContent = 'Error making manual API call: ' + error.message;
+        //     responseText.style.display = 'block';
+        //     section.querySelector('#cached-current-sentence').style.display = 'none';
+        //   }
+        // });
 
         window.enablePrecaching = false;
         if (window.enablePrecaching) {
