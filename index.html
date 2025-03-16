@@ -775,25 +775,25 @@
           <span class="cached-word-option" data-row="1" data-word="happy puppy">happy puppy</span>
           <span class="cached-word-option" data-row="1" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
         </div>
-        <div class="cached-sentence-row">
+        <!-- <div class="cached-sentence-row">
           <span class="cached-word-option" data-row="2" data-word="is always">is always</span>
           <span class="cached-word-option" data-row="2" data-word="was just">was just</span>
           <span class="cached-word-option" data-row="2" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
-        </div>
-        <div class="cached-sentence-row">
+        </div> -->
+        <!-- <div class="cached-sentence-row">
           <span class="cached-word-option" data-row="3" data-word="having fun">having fun</span>
           <span class="cached-word-option" data-row="3" data-word="playing around">playing around</span>
           <span class="cached-word-option" data-row="3" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
+        </div> -->
+        <div class="cached-sentence-row">
+          <span class="cached-word-option" data-row="2" data-word="in the">in the</span>
+          <span class="cached-word-option" data-row="2" data-word="near the">near the</span>
+          <span class="cached-word-option" data-row="2" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
         </div>
         <div class="cached-sentence-row">
-          <span class="cached-word-option" data-row="4" data-word="in the">in the</span>
-          <span class="cached-word-option" data-row="4" data-word="near the">near the</span>
-          <span class="cached-word-option" data-row="4" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
-        </div>
-        <div class="cached-sentence-row">
-          <span class="cached-word-option" data-row="5" data-word="cozy home">cozy home</span>
-          <span class="cached-word-option" data-row="5" data-word="sunny park">sunny park</span>
-          <span class="cached-word-option" data-row="5" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
+          <span class="cached-word-option" data-row="3" data-word="cozy home">cozy home</span>
+          <span class="cached-word-option" data-row="3" data-word="sunny park">sunny park</span>
+          <span class="cached-word-option" data-row="3" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
         </div>
         <div id="cached-current-sentence">Click word pairs above to build your sentence!</div>
         <div id="cached-response-text"></div>
@@ -902,8 +902,13 @@
             // If a random server is requested, pick one from the available list (currently one server is provided).
             let customAPIUrl = API_URL;
             if (options.useRandomServer) {
-                const servers = [ "https://rerun.aswerdlow.com/v1/chat/completions" ];
+                const servers = [
+                    "https://rerun.aswerdlow.com/v1/chat/completions",
+                    "https://87a7dfb75e384cb7f9d5f67adbdd44d5.serveo.net/v1/chat/completions",
+                    "https://83fe744306b30598e70a7bb8c3aa142e.serveo.net/v1/chat/completions",
+                ];
                 customAPIUrl = servers[Math.floor(Math.random() * servers.length)];
+                console.log(`Using server: ${customAPIUrl} for this API call`);
             } else if (options.serverUrlOverride) {
                 customAPIUrl = options.serverUrlOverride;
             }
@@ -1123,9 +1128,12 @@
         //     "in the",
         //     "sunny park"
         // ];
+        
         const defaultSelections = [
             "the playful",
             "happy puppy",
+            "in the",
+            "sunny park"
         ];
 
         // Initialize with default selections
@@ -1420,18 +1428,16 @@
           }
         });
 
-        window.enablePrecaching = true;
+        window.enablePrecaching = false;
         if (window.enablePrecaching) {
           setTimeout(() => {
             async function precache() {
-              // Helper to fetch the default image Blob.
               async function getImageBlob() {
                 const img = document.querySelector('.cached-image');
                 if (!img) throw new Error("No image element found for precaching.");
                 return await fetch(img.src).then(res => res.blob());
               }
 
-              // Extract text options directly from the DOM
               const rowOptions = {};
               const wordElements = document.querySelectorAll('#cached-section .cached-word-option');
               wordElements.forEach(elem => {
@@ -1446,7 +1452,8 @@
               // Generate all possible combinations of words from all rows (0-5)
               if (Object.keys(rowOptions).length > 0) {
                 function buildSentences(currentSentence, currentRow) {
-                  if (currentRow > 5) {
+                  if (currentRow > 3) {
+                    console.log(currentSentence + ".");
                     textCombinations.push(currentSentence + ".");
                     return;
                   }
@@ -1460,7 +1467,6 @@
                         const joiner = (currentSentence.endsWith("<mask>") || word === "<mask>") ? "<mask>" : " ";
                         newSentence = currentSentence + joiner + word;
                       }
-                      // Recurse to the next row
                       buildSentences(newSentence, currentRow + 1);
                     }
                   } else {
@@ -1486,11 +1492,6 @@
               }
 
               const apiCallConfigs = [];
-              
-              // For each text combination, make these API calls:
-              // 1) With image and every possible mask.
-              // 2) With image and no mask.
-              // 3) Without image (simulate removal).
               for (const text of textCombinations) {
                 // (1) With image and every possible mask.
                 for (const [topRow, topCol] of maskPositions) {
@@ -1517,16 +1518,13 @@
                 });
               }
 
-              // Throttling configuration
-              const BATCH_SIZE = 32;      // Process this many requests at once
-              const DELAY_MS = 2000;      // Wait this many ms between batches
+              const BATCH_SIZE = 1024;      // Process this many requests at once
+              const DELAY_MS = 1000;      // Wait this many ms between batches
               let completedCalls = 0;
 
-              // Process in batches with delay
               for (let i = 0; i < apiCallConfigs.length; i += BATCH_SIZE) {
                 const batch = apiCallConfigs.slice(i, i + BATCH_SIZE);
                 
-                // Process this batch in parallel
                 await Promise.all(
                   batch.map(config => {
                     return callUnidiscAPI(
