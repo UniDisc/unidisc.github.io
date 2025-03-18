@@ -229,12 +229,10 @@
                 <span class="eql-cntrb"><small><br><sup>*</sup>Equal Contribution</small></span>
                 </div> 
   
-                  
-  
                     <div class="column has-text-centered">
                       <div class="publication-links">
                         <span class="link-block">
-                          <a href="static/files/UniDisc.pdf" target="_blank"
+                          <a href="https://arxiv.org/pdf/your_paper_id" target="_blank"
                           class="external-link button is-normal is-rounded is-dark">
                           <span class="icon">
                             <i class="fas fa-file-pdf"></i>
@@ -254,7 +252,7 @@
                     </span> -->
   
                     <span class="link-block">
-                      <a href="https://github.com/your_repo_here" target="_blank"
+                      <a href="https://github.com/alexanderswerdlow/unidisc" target="_blank"
                       class="external-link button is-normal is-rounded is-dark">
                       <span class="icon">
                         <i class="fab fa-github"></i>
@@ -891,6 +889,7 @@
         }
         
         let isImageRemoved = false; // Add flag to track if image is removed
+        let DISABLE_HASH_CHECKING = false; // Add this flag to globally disable hash checking
         
         // Refactored callUnidiscAPI function accepting an options parameter.
         // This function will be used both by normal interactions and by the precaching code.
@@ -982,26 +981,30 @@
 
             // Caching logic - hash the entire request payload.
             let hash = null;
-            try {
-                const payloadString = JSON.stringify(payload);
-                const encoder = new TextEncoder();
-                const data = encoder.encode(payloadString);
+            
+            // Skip hash generation and checking if DISABLE_HASH_CHECKING is true
+            if (!DISABLE_HASH_CHECKING && !options.skipHashChecking) {
+                try {
+                    const payloadString = JSON.stringify(payload);
+                    const encoder = new TextEncoder();
+                    const data = encoder.encode(payloadString);
 
-                if (typeof crypto !== 'undefined' && crypto.subtle) {
-                    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-                    const hashArray = Array.from(new Uint8Array(hashBuffer));
-                    hash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-                    console.log("Hash generated from full payload:", hash);
-                } else {
-                    throw new Error('Web Crypto API is not available. Please ensure you are serving your page over HTTPS or via localhost.');
+                    if (typeof crypto !== 'undefined' && crypto.subtle) {
+                        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+                        const hashArray = Array.from(new Uint8Array(hashBuffer));
+                        hash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+                        console.log("Hash generated from full payload:", hash);
+                    } else {
+                        throw new Error('Web Crypto API is not available. Please ensure you are serving your page over HTTPS or via localhost.');
+                    }
+                } catch (error) {
+                    console.error('Error generating hash:', error);
                 }
-            } catch (error) {
-                console.error('Error generating hash:', error);
             }
 
             try {
-                // Check cache using the hash
-                if (hash) {
+                // Check cache using the hash only if hash checking is enabled
+                if (hash && !DISABLE_HASH_CHECKING && !options.skipHashChecking) {
                     try {
                         const response = await fetch(`https://grafana.aswerdlow.com/${hash}.json`, {
                             mode: 'cors',
@@ -1035,7 +1038,8 @@
 
             console.log("Hash: ", hash);
 
-            if (hash) {
+            // Only add hash to payload if hash checking is enabled
+            if (hash && !DISABLE_HASH_CHECKING) {
                 payload.request_hash = hash;
             }
 
@@ -1428,7 +1432,7 @@
         //   }
         // });
 
-        window.enablePrecaching = true;
+        window.enablePrecaching = false;
         if (window.enablePrecaching) {
           setTimeout(() => {
             async function precache() {
@@ -1725,7 +1729,7 @@
   </section> -->
 
  
-  <section class="hero is-light is-small pt-5 pb-6">
+  <section class="hero  is-small pt-5 pb-6">
     <div class="hero-body">
       <div class="container">
         <h2 id="generation_analysis" class="title is-3 has-text-centered">
@@ -1737,8 +1741,8 @@
         <div class="columns is-centered" style="margin-top: 2rem;">
           <div class="column is-five-sixths has-text-centered">
             <picture>
-              <source srcset="static/images/denoising_viz.webp" type="image/webp">
-              <img src="static/images/denoising_viz.webp" alt="Joint Infilling">
+              <source srcset="static/images/denoising_viz_new.png" type="image/png">
+              <img src="static/images/denoising_viz_new.png" alt="Joint Infilling">
             </picture>
             <p>Intermediate Steps during Joint Infilling of Image and Text. UniDisc jointly infills both image and text during generation.</p>
           </div>
