@@ -774,24 +774,24 @@
           <span class="cached-word-option" data-row="1" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
         </div>
         <!-- <div class="cached-sentence-row">
-          <span class="cached-word-option" data-row="2" data-word="is always">is always</span>
+          <span class="cached-word-option" data-row="2" data-word="is">is</span>
           <span class="cached-word-option" data-row="2" data-word="was just">was just</span>
           <span class="cached-word-option" data-row="2" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
         </div> -->
-        <!-- <div class="cached-sentence-row">
-          <span class="cached-word-option" data-row="3" data-word="having fun">having fun</span>
-          <span class="cached-word-option" data-row="3" data-word="playing around">playing around</span>
-          <span class="cached-word-option" data-row="3" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
-        </div> -->
         <div class="cached-sentence-row">
-          <span class="cached-word-option" data-row="2" data-word="in the">in the</span>
-          <span class="cached-word-option" data-row="2" data-word="near the">near the</span>
+          <span class="cached-word-option" data-row="2" data-word="is having fun">is having fun</span>
+          <span class="cached-word-option" data-row="2" data-word="is playing">is playing</span>
           <span class="cached-word-option" data-row="2" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
         </div>
         <div class="cached-sentence-row">
-          <span class="cached-word-option" data-row="3" data-word="cozy home">cozy home</span>
-          <span class="cached-word-option" data-row="3" data-word="sunny park">sunny park</span>
+          <span class="cached-word-option" data-row="3" data-word="in the">in the</span>
+          <span class="cached-word-option" data-row="3" data-word="near the">near the</span>
           <span class="cached-word-option" data-row="3" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
+        </div>
+        <div class="cached-sentence-row">
+          <span class="cached-word-option" data-row="4" data-word="cozy home">cozy home</span>
+          <span class="cached-word-option" data-row="4" data-word="sunny park">sunny park</span>
+          <span class="cached-word-option" data-row="4" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
         </div>
         <div id="cached-current-sentence">Click word pairs above to build your sentence!</div>
         <div id="cached-response-text"></div>
@@ -900,7 +900,7 @@
             // Choose the API URL.
             // If a random server is requested, pick one from the available list (currently one server is provided).
             let customAPIUrl = API_URL;
-            if (options.useRandomServer) {
+            if (options.useRandomServer && false) {
                 const servers = [
                     "https://rerun.aswerdlow.com/v1/chat/completions",
                     "https://87a7dfb75e384cb7f9d5f67adbdd44d5.serveo.net/v1/chat/completions",
@@ -1128,7 +1128,14 @@
         //     "the playful",
         //     "happy puppy",
         //     "is always",
-        //     "playing around",
+        //     "playing",
+        //     "in the",
+        //     "sunny park"
+        // ];
+
+        // const defaultSelections = [
+        //     "the playful",
+        //     "happy puppy",
         //     "in the",
         //     "sunny park"
         // ];
@@ -1136,6 +1143,7 @@
         const defaultSelections = [
             "the playful",
             "happy puppy",
+            "is having fun",
             "in the",
             "sunny park"
         ];
@@ -1456,7 +1464,7 @@
               // Generate all possible combinations of words from all rows (0-5)
               if (Object.keys(rowOptions).length > 0) {
                 function buildSentences(currentSentence, currentRow) {
-                  if (currentRow > 3) {
+                  if (currentRow > 4) {
                     console.log(currentSentence + ".");
                     textCombinations.push(currentSentence + ".");
                     return;
