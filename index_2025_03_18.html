@@ -1006,7 +1006,7 @@
                 // Check cache using the hash only if hash checking is enabled
                 if (hash && !DISABLE_HASH_CHECKING && !options.skipHashChecking) {
                     try {
-                        const response = await fetch(`https://grafana.aswerdlow.com/${hash}.json`, {
+                        const response = await fetch(`/static/responses/${hash}.json`, {
                             mode: 'cors',
                             headers: {
                                 'Accept': 'application/json'
@@ -1544,7 +1544,7 @@
                       config.maskArray, 
                       config.text, 
                       { 
-                        useRandomServer: true,
+                        useRandomServer: false,
                         noImage: config.noImage
                       }
                     )
