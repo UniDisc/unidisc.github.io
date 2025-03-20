@@ -137,7 +137,7 @@
         box-sizing: border-box;
         white-space: pre-wrap;
         word-break: break-word;
-        display: none; /* Initially hidden */
+        display: block; /* Changed from none to block */
     }
 
     /* Adjust the main container spacing */
@@ -188,6 +188,159 @@
       background-color: #888888; /* Solid grey color */
       z-index: 10; /* Ensure it's above the grid */
       display: none; /* Initially hidden */
+    }
+
+    /* Scoped styles for the cached section */
+    #cached-section {
+      font-family: Arial, sans-serif;
+    }
+    /* Restore bolder text for headers and word options */
+    #cached-section h2,
+    #cached-section .cached-word-option {
+      font-weight: 700;
+    }
+    #cached-section .cached-main-container {
+      display: flex;
+      max-width: 1200px; /* Increased width to accommodate side-by-side layout */
+      margin: 0 auto;
+      gap: 40px;
+      align-items: flex-start;
+      padding: 0 20px;
+    }
+    /* Updated to have input and output sides */
+    #cached-section .cached-side {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      width: 50%;
+    }
+    /* Left side (input) - left aligned */
+    #cached-section .cached-input-side {
+      align-items: flex-start;
+    }
+    /* Right side (output) - center aligned */
+    #cached-section .cached-output-side {
+      align-items: center;
+    }
+    #cached-section .cached-side-title {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 1.2rem;
+      width: 100%;
+    }
+    #cached-section .cached-grid-container {
+      position: relative;
+      width: 512px;
+      height: 512px;
+      margin: 0 auto;
+    }
+    #cached-section .cached-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    #cached-section .cached-grid {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: repeat(5, 1fr);
+    }
+    #cached-section .cached-grid-cell {
+      border: 1px solid black;
+      transition: background-color 0.1s ease;
+    }
+    #cached-section .cached-highlighted {
+      background-color: rgba(128, 128, 128, 0.9);
+    }
+    #cached-section .cached-sentence-builder {
+      width: 512px; /* Match width with image container */
+      padding: 20px;
+    }
+    #cached-section .cached-output-container {
+      width: 512px; /* Match width with image container */
+    }
+    #cached-section .cached-sentence-row {
+      margin: 15px 0;
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    #cached-section .cached-word-option {
+      padding: 12px 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: #666;
+      border-radius: 4px;
+      font-weight: 600;
+      background: #f5f5f5;
+    }
+    #cached-section .cached-word-option:hover {
+      color: #000;
+      font-weight: 600;
+      background: #e5e5e5;
+    }
+    #cached-section .cached-word-option.cached-selected {
+      color: #886a6a;
+      font-weight: 600;
+      background: #e0e0e0;
+    }
+    #cached-section .cached-text-display {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f5f5f5;
+      border-radius: 8px;
+      min-height: 30px;
+      font-family: monospace;
+      width: 100%;
+      box-sizing: border-box;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    #cached-section .cached-output-display {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #e6f7ff;
+      border-radius: 8px;
+      min-height: 30px;
+      font-family: monospace;
+      width: 100%;
+      box-sizing: border-box;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    #cached-section .cached-grey-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #888888;
+      z-index: 10;
+      display: none;
+    }
+    #cached-section .cached-reset-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      justify-content: center;
+    }
+    #cached-section .cached-reset-button {
+      padding: 8px 15px;
+      background-color: #f5f5f5;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s ease;
+    }
+    #cached-section .cached-reset-button:hover {
+      background-color: #e0e0e0;
     }
   </style>
 
@@ -650,151 +803,65 @@
 
   <!-- cached-section starts here -->
   <section id="cached-section" class="section">
-    <style>
-      /* Scoped styles for the cached section */
-      #cached-section {
-        font-family: Arial, sans-serif;
-      }
-      /* Restore bolder text for headers and word options */
-      #cached-section h2,
-      #cached-section .cached-word-option {
-        font-weight: 700;
-      }
-      #cached-section .cached-main-container {
-        display: flex;
-        max-width: 1050px; /* Reduced from 1200px */
-        margin: 0 auto; /* Center the container */
-        gap: 40px; /* Increased from 20px for more balanced spacing */
-        align-items: flex-start;
-        padding: 0 20px; /* Add padding to prevent edge touching */
-      }
-      #cached-section .cached-left-container {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-      }
-      #cached-section .cached-grid-container {
-        position: relative;
-        width: 512px;
-        height: 512px;
-      }
-      #cached-section .cached-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-      #cached-section .cached-grid {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        grid-template-rows: repeat(5, 1fr);
-      }
-      #cached-section .cached-grid-cell {
-        border: 1px solid black;
-        transition: background-color 0.1s ease;
-      }
-      #cached-section .cached-highlighted {
-        background-color: rgba(128, 128, 128, 0.9);
-      }
-      #cached-section .cached-sentence-builder {
-        flex-grow: 1;
-        padding: 20px;
-        max-width: 500px; /* Add max-width to constrain the builder section */
-      }
-      #cached-section .cached-sentence-row {
-        margin: 15px 0;
-        display: flex;
-        gap: 15px;
-        flex-wrap: wrap;
-      }
-      #cached-section .cached-word-option {
-        padding: 12px 20px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        color: #666;
-        border-radius: 4px;
-        font-weight: 600;
-        background: #f5f5f5;
-      }
-      #cached-section .cached-word-option:hover {
-        color: #000;
-        font-weight: 600;
-        background: #e5e5e5;
-      }
-      #cached-section .cached-word-option.cached-selected {
-        color: #886a6a;
-        font-weight: 600;
-        background: #e0e0e0;
-      }
-      #cached-section #cached-current-sentence {
-        margin-top: 20px;
-        padding: 15px;
-        background-color: #f5f5f5;
-        border-radius: 8px;
-        min-height: 30px;
-        font-family: monospace;
-        width: 100%; /* Ensure it takes full width of its container */
-        box-sizing: border-box; /* Include padding in width calculation */
-        white-space: pre-wrap; /* Allow text to wrap */
-        word-break: break-word; /* Break long words if needed */
-      }
-    </style>
-
-    <!-- HTML content for cached.html with namespaced IDs/classes -->
+    <!-- HTML content for cached section with updated layout -->
     <div class="cached-main-container">
-      <div class="cached-left-container">
+      <!-- Left side - Input -->
+      <div class="cached-side cached-input-side">
+        <div class="cached-side-title">Input</div>
         <div class="cached-grid-container">
-          <img src="static/images/fergus.png" alt="Grid Image" class="cached-image">
+          <img src="static/images/fergus.png" alt="Input Image" class="cached-image" id="cached-input-image">
           <div id="cached-grid" class="cached-grid"></div>
-          <!-- Add grey overlay div -->
           <div id="cached-grey-overlay" class="cached-grey-overlay"></div>
-          <!-- Add reset buttons below the image -->
+        </div>
+        
+        <div class="cached-sentence-builder">
+          <h2>Build your sentence:</h2>
+          <div class="cached-sentence-row">
+            <span class="cached-word-option" data-row="0" data-word="the playful">the playful</span>
+            <span class="cached-word-option" data-row="0" data-word="a curious">a curious</span>
+            <span class="cached-word-option" data-row="0" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
+          </div>
+          <div class="cached-sentence-row">
+            <span class="cached-word-option" data-row="1" data-word="little cat">little cat</span>
+            <span class="cached-word-option" data-row="1" data-word="happy puppy">happy puppy</span>
+            <span class="cached-word-option" data-row="1" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
+          </div>
+          <div class="cached-sentence-row">
+            <span class="cached-word-option" data-row="2" data-word="is having fun">is having fun</span>
+            <span class="cached-word-option" data-row="2" data-word="is playing">is playing</span>
+            <span class="cached-word-option" data-row="2" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
+          </div>
+          <div class="cached-sentence-row">
+            <span class="cached-word-option" data-row="3" data-word="in the">in the</span>
+            <span class="cached-word-option" data-row="3" data-word="near the">near the</span>
+            <span class="cached-word-option" data-row="3" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
+          </div>
+          <div class="cached-sentence-row">
+            <span class="cached-word-option" data-row="4" data-word="cozy home">cozy home</span>
+            <span class="cached-word-option" data-row="4" data-word="sunny park">sunny park</span>
+            <span class="cached-word-option" data-row="4" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
+          </div>
+          <div id="cached-current-sentence" class="cached-text-display">Click word pairs above to build your sentence!</div>
+          
           <div class="cached-reset-buttons">
             <button id="cached-reset-image" class="cached-reset-button">Restore Image</button>
             <button id="cached-remove-image" class="cached-reset-button">T2I (Remove Image)</button>
-            <!-- <button id="cached-manual-api-call" class="cached-reset-button">Manual API Call</button> -->
           </div>
         </div>
       </div>
-
-      <div class="cached-sentence-builder">
-        <h2>Build your sentence:</h2>
-        <div class="cached-sentence-row">
-          <span class="cached-word-option" data-row="0" data-word="the playful">the playful</span>
-          <span class="cached-word-option" data-row="0" data-word="a curious">a curious</span>
-          <span class="cached-word-option" data-row="0" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
+      
+      <!-- Right side - Output -->
+      <div class="cached-side cached-output-side">
+        <div class="cached-side-title">Output</div>
+        <div class="cached-grid-container">
+          <img src="static/images/fergus.png" alt="Output Image" class="cached-image" id="cached-output-image">
+          <!-- No grid or overlay needed for output image -->
         </div>
-        <div class="cached-sentence-row">
-          <span class="cached-word-option" data-row="1" data-word="little cat">little cat</span>
-          <span class="cached-word-option" data-row="1" data-word="happy puppy">happy puppy</span>
-          <span class="cached-word-option" data-row="1" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
+        
+        <div class="cached-output-container">
+          <h2>Model Response:</h2>
+          <div id="cached-response-text" class="cached-output-display">Select words and interact with the input image to see results here.</div>
         </div>
-        <!-- <div class="cached-sentence-row">
-          <span class="cached-word-option" data-row="2" data-word="is">is</span>
-          <span class="cached-word-option" data-row="2" data-word="was just">was just</span>
-          <span class="cached-word-option" data-row="2" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
-        </div> -->
-        <div class="cached-sentence-row">
-          <span class="cached-word-option" data-row="2" data-word="is having fun">is having fun</span>
-          <span class="cached-word-option" data-row="2" data-word="is playing">is playing</span>
-          <span class="cached-word-option" data-row="2" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
-        </div>
-        <div class="cached-sentence-row">
-          <span class="cached-word-option" data-row="3" data-word="in the">in the</span>
-          <span class="cached-word-option" data-row="3" data-word="near the">near the</span>
-          <span class="cached-word-option" data-row="3" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
-        </div>
-        <div class="cached-sentence-row">
-          <span class="cached-word-option" data-row="4" data-word="cozy home">cozy home</span>
-          <span class="cached-word-option" data-row="4" data-word="sunny park">sunny park</span>
-          <span class="cached-word-option" data-row="4" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
-        </div>
-        <div id="cached-current-sentence">Click word pairs above to build your sentence!</div>
-        <div id="cached-response-text"></div>
       </div>
     </div>
 
@@ -1072,6 +1139,9 @@
         const section = document.getElementById('cached-section');
         const grid = section.querySelector('#cached-grid');
         const currentSentence = section.querySelector('#cached-current-sentence');
+        const responseText = section.querySelector('#cached-response-text');
+        const inputImage = section.querySelector('#cached-input-image');
+        const outputImage = section.querySelector('#cached-output-image');
         const cells = [];
         let currentRow = 0;
         let currentCol = 0;
@@ -1167,18 +1237,17 @@
                 // If auto-reset mode is enabled AND the image is not already removed,
                 // reset the image before changing text
                 if (window.autoResetOnMaskSelect && !isImageRemoved) {
-                    const img = section.querySelector('.cached-image');
-                    img.src = originalImageSrc;
-                    img.style.filter = "none"; // Clear any filters
+                    inputImage.src = originalImageSrc;
+                    inputImage.style.filter = "none"; // Clear any filters
                     isImageRemoved = false; // Reset the image removed flag
                     
                     // Hide the grey overlay
+                    const greyOverlay = section.querySelector('#cached-grey-overlay');
                     greyOverlay.style.display = "none";
                     
-                    // Clear any previous response text
-                    const responseText = section.querySelector('#cached-response-text');
-                    responseText.style.display = 'none';
-                    section.querySelector('#cached-current-sentence').style.display = 'block';
+                    // Reset output display
+                    responseText.textContent = 'Select words and interact with the input image to see results here.';
+                    outputImage.src = originalImageSrc;
                 }
         
                 section.querySelectorAll(`.cached-word-option[data-row="${row}"]`)
@@ -1191,9 +1260,9 @@
                 
                 // Call API directly without requiring a mask
                 try {
-                    await updateImage();
+                    await updateOutput();
                 } catch (error) {
-                    console.error('Error updating image after text change:', error);
+                    console.error('Error updating output after text change:', error);
                 }
             });
         });
@@ -1218,12 +1287,11 @@
             highlightCells(row, col);
         });
         
-        async function updateImage() {
+        async function updateOutput() {
             try {
-                const img = section.querySelector('.cached-image');
                 const currentSentence = section.querySelector('#cached-current-sentence');
                 const responseText = section.querySelector('#cached-response-text');
-                const greyOverlay = section.querySelector('#cached-grey-overlay'); // Get the overlay
+                const greyOverlay = section.querySelector('#cached-grey-overlay');
 
                 let maskArray = null;
                 
@@ -1233,19 +1301,14 @@
                     maskArray = createMaskArray(topLeftRow, topLeftCol);
                 }
         
-                const sentence = currentSentence.textContent
-                const imageBlob = await fetch(img.src).then(res => res.blob());
+                const sentence = currentSentence.textContent;
+                const imageBlob = await fetch(inputImage.src).then(res => res.blob());
                 
                 // Show loading state
-                currentSentence.style.display = 'none';
-                responseText.style.display = 'block';
                 responseText.textContent = 'Processing your request...';
                 
                 console.log("sentence: ", sentence);
                 const response = await callUnidiscAPI(imageBlob, maskArray, sentence);
-
-                // Always remove the grey overlay when a response comes in
-                greyOverlay.style.display = "none";
                 
                 const message = response.choices?.[0]?.message;
                 if (!message) {
@@ -1281,29 +1344,12 @@
                     imageUrl = message.image_url.url;
                 }
 
-                // Only update the image if:
-                // 1. We didn't send an image (isImageRemoved is true), OR
-                // 2. We sent both an image AND a mask (maskArray exists and has at least one true value)
-                const hasMask = maskArray && maskArray.some(row => row.some(cell => cell === true));
-                
-                console.log("isImageRemoved: ", isImageRemoved);
-                console.log("hasMask: ", hasMask);
-                
-                if (imageUrl && (isImageRemoved || hasMask)) {
+                // Update the output image if we have an image response
+                if (imageUrl) {
                     const newImageUrl = imageUrl.startsWith("data:image/jpeg;base64,")
                         ? imageUrl
                         : `data:image/jpeg;base64,${imageUrl}`;
-                    img.src = newImageUrl;
-                }
-
-                // Always show the response text if we have it
-                if (textContent) {
-                    responseText.style.display = 'block';
-                    currentSentence.style.display = 'none';
-                } else {
-                    // If no text response, show the current sentence again
-                    responseText.style.display = 'none';
-                    currentSentence.style.display = 'block';
+                    outputImage.src = newImageUrl;
                 }
                 
                 // Reset the mask state after getting response
@@ -1312,11 +1358,8 @@
                 cells.forEach(cell => cell.classList.remove('cached-highlighted'));
 
             } catch (error) {
-                console.error('Image update failed:', error);
-                const responseText = section.querySelector('#cached-response-text');
+                console.error('Output update failed:', error);
                 responseText.textContent = 'Error: ' + error.message;
-                responseText.style.display = 'block';
-                section.querySelector('#cached-current-sentence').style.display = 'none';
             }
         }
         
@@ -1329,18 +1372,13 @@
             
             // If auto-reset mode is enabled, reset the image before selecting the mask
             if (window.autoResetOnMaskSelect) {
-                const img = section.querySelector('.cached-image');
-                img.src = originalImageSrc;
-                img.style.filter = "none"; // Clear any filters
+                inputImage.src = originalImageSrc;
+                inputImage.style.filter = "none"; // Clear any filters
                 isImageRemoved = false; // Reset the image removed flag
                 
                 // Hide the grey overlay
+                const greyOverlay = section.querySelector('#cached-grey-overlay');
                 greyOverlay.style.display = "none";
-                
-                // Clear any previous response text
-                const responseText = section.querySelector('#cached-response-text');
-                responseText.style.display = 'none';
-                section.querySelector('#cached-current-sentence').style.display = 'block';
             }
             
             if (maskLocked && 
@@ -1370,9 +1408,9 @@
             }
         
             try {
-                await updateImage();
+                await updateOutput();
             } catch (error) {
-                console.error('Error updating image:', error);
+                console.error('Error updating output:', error);
             }
         });
         
@@ -1389,15 +1427,13 @@
         // Add event listeners for the reset buttons
         const resetImageButton = section.querySelector('#cached-reset-image');
         const removeImageButton = section.querySelector('#cached-remove-image');
-        // const manualApiCallButton = section.querySelector('#cached-manual-api-call'); // Add reference to the new button
         const greyOverlay = section.querySelector('#cached-grey-overlay');
         const originalImageSrc = "static/images/fergus.png"; // Store the original image source
         
         // Reset image button functionality
         resetImageButton.addEventListener('click', () => {
-          const img = section.querySelector('.cached-image');
-          img.src = originalImageSrc;
-          img.style.filter = "none"; // Clear any filters
+          inputImage.src = originalImageSrc;
+          inputImage.style.filter = "none"; // Clear any filters
           isImageRemoved = false; // Reset the image removed flag
           
           // Hide the grey overlay
@@ -1408,14 +1444,13 @@
           activeMask = null;
           cells.forEach(cell => cell.classList.remove('cached-highlighted'));
           
-          // Reset the response text
-          const responseText = section.querySelector('#cached-response-text');
-          responseText.style.display = 'none';
-          section.querySelector('#cached-current-sentence').style.display = 'block';
+          // Reset the output image and response text
+          outputImage.src = originalImageSrc;
+          responseText.textContent = 'Select words and interact with the input image to see results here.';
         });
         
         // Remove image button functionality
-        removeImageButton.addEventListener('click', () => {
+        removeImageButton.addEventListener('click', async () => {
           // Show the solid grey overlay
           greyOverlay.style.display = "block";
           isImageRemoved = true; // Set flag to indicate image is removed
