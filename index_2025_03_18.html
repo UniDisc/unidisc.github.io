@@ -248,8 +248,8 @@
       width: 100%;
       height: 100%;
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      grid-template-rows: repeat(5, 1fr);
+      grid-template-columns: repeat(6, 1fr);
+      grid-template-rows: repeat(6, 1fr);
     }
     #cached-section .cached-grid-cell {
       border: 1px solid black;
@@ -905,7 +905,7 @@
             use_reward_models: false
         };
 
-        const GRID_SIZE = 5; // GRID_SIZE x GRID_SIZE.
+        const GRID_SIZE = 6; // GRID_SIZE x GRID_SIZE.
         const MASK_SIZE = 3; // Change this number for a different mask size.
         
         // --- Utility functions ---
@@ -1475,7 +1475,7 @@
         //   }
         // });
 
-        window.enablePrecaching = false;
+        window.enablePrecaching = true;
         if (window.enablePrecaching) {
           setTimeout(() => {
             async function precache() {
