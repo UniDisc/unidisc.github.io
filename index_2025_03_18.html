@@ -107,8 +107,9 @@
     /* Update the cached-sentence-builder width and layout */
     #cached-section .cached-sentence-builder {
         flex-grow: 1;
-        padding: 20px;
-        max-width: 420px; /* Adjusted to balance with grid container */
+        width: 100%; /* Changed from fixed 512px to 100% */
+        padding: 0px 23px; /* Keep existing padding */
+        max-width: 512px; /* Add max-width that matches the grid container */
     }
 
     /* Update the current sentence display */
@@ -160,9 +161,13 @@
     #cached-section .cached-reset-buttons {
       display: flex;
       gap: 10px;
-      margin-top: 5px;       /* Reduced from 10px */
-      margin-bottom: 15px;   /* Added margin-bottom */
-      justify-content: flex-start; /* Changed from center to flex-start */
+      margin-top: 5px;       
+      margin-bottom: 15px;   
+      justify-content: flex-start;
+      flex-wrap: wrap;     /* Changed from nowrap to wrap to handle different screen sizes */
+      overflow-x: visible; /* Changed from auto to visible since we're allowing wrapping */
+      padding-bottom: 5px;
+      width: 100%;         /* Added to ensure it takes full width */
     }
 
     #cached-section .cached-reset-button {
@@ -333,9 +338,12 @@
     #cached-section .cached-reset-buttons {
       display: flex;
       gap: 10px;
-      margin-top: 5px;       /* Reduced from 10px */
-      margin-bottom: 15px;   /* Added margin-bottom */
-      justify-content: flex-start; /* Changed from center to flex-start */
+      margin-top: 5px;       
+      margin-bottom: 15px;   
+      justify-content: flex-start;
+      flex-wrap: nowrap;     /* Prevent wrapping */
+      overflow-x: auto;      /* Allow horizontal scrolling if needed */
+      padding-bottom: 5px;   /* Add space for potential scrollbar */
     }
     #cached-section .cached-reset-button {
       padding: 8px 15px;
@@ -348,6 +356,24 @@
     }
     #cached-section .cached-reset-button:hover {
       background-color: #e0e0e0;
+    }
+    #cached-section .cached-mask-size-container {
+      display: flex;
+      align-items: center;
+      margin-left: 10px;
+    }
+    #cached-section .cached-mask-size-label {
+      font-size: 14px;
+      margin-right: 5px;
+      white-space: nowrap;
+    }
+    #cached-section .cached-mask-size-input {
+      width: 50px;
+      padding: 6px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      text-align: center;
     }
   </style>
 
@@ -826,6 +852,10 @@
             <button id="cached-reset-image" class="cached-reset-button">Restore Image</button>
             <button id="cached-clear-mask" class="cached-reset-button">Clear Mask</button>
             <button id="cached-remove-image" class="cached-reset-button">Fully Mask</button>
+            <div class="cached-mask-size-container">
+              <label for="cached-mask-size" class="cached-mask-size-label">Mask Size:</label>
+              <input type="number" id="cached-mask-size" class="cached-mask-size-input" min="2" max="8" value="6">
+            </div>
           </div>
           
           <h2>Build your sentence:</h2>
@@ -916,7 +946,16 @@
         };
 
         const GRID_SIZE = 8; // GRID_SIZE x GRID_SIZE.
-        const MASK_SIZE = 6; // Change this number for a different mask size.
+        // Replace the hardcoded MASK_SIZE with a function
+        function getMaskSize() {
+          const maskSizeInput = document.getElementById('cached-mask-size');
+          if (maskSizeInput) {
+            const size = parseInt(maskSizeInput.value, 10);
+            // Validate the size is between 2 and GRID_SIZE
+            return Math.min(Math.max(size, 2), GRID_SIZE);
+          }
+          return 6; // Default value if input not found
+        }
         
         // --- Utility functions ---
         async function processImage(imageBytes) {
@@ -1154,37 +1193,39 @@
           cells.push(cell);
         }
         
-        // Helper function to create a mask array from top-left coordinates
+        // Update createMaskArray to use the dynamic mask size
         function createMaskArray(topLeftRow, topLeftCol) {
+          const maskSize = getMaskSize();
           const maskArray = Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(false));
-          for (let r = topLeftRow; r < topLeftRow + MASK_SIZE; r++) {
-            for (let c = topLeftCol; c < topLeftCol + MASK_SIZE; c++) {
+          for (let r = topLeftRow; r < topLeftRow + maskSize && r < GRID_SIZE; r++) {
+            for (let c = topLeftCol; c < topLeftCol + maskSize && c < GRID_SIZE; c++) {
               maskArray[r][c] = true;
             }
           }
           return maskArray;
         }
         
-        // Update highlighted grid region.
+        // Update highlightCells to use the dynamic mask size
         function highlightCells(row, col) {
-            // If mask is locked, don't update highlights on mousemove
-            if (maskLocked) return;
-            
-            cells.forEach(cell => cell.classList.remove('cached-highlighted'));
-            const offset = Math.floor(MASK_SIZE / 2);
-            const topLeftRow = Math.min(Math.max(row - offset, 0), GRID_SIZE - MASK_SIZE);
-            const topLeftCol = Math.min(Math.max(col - offset, 0), GRID_SIZE - MASK_SIZE);
-            currentRow = topLeftRow + offset;
-            currentCol = topLeftCol + offset;
-        
-            for (let r = topLeftRow; r < topLeftRow + MASK_SIZE; r++) {
-                for (let c = topLeftCol; c < topLeftCol + MASK_SIZE; c++) {
-                    const cell = cells[r * GRID_SIZE + c];
-                    if (cell) {
-                        cell.classList.add('cached-highlighted');
-                    }
-                }
+          // If mask is locked, don't update highlights on mousemove
+          if (maskLocked) return;
+          
+          cells.forEach(cell => cell.classList.remove('cached-highlighted'));
+          const maskSize = getMaskSize();
+          const offset = Math.floor(maskSize / 2);
+          const topLeftRow = Math.min(Math.max(row - offset, 0), GRID_SIZE - maskSize);
+          const topLeftCol = Math.min(Math.max(col - offset, 0), GRID_SIZE - maskSize);
+          currentRow = row;
+          currentCol = col;
+
+          for (let r = topLeftRow; r < topLeftRow + maskSize && r < GRID_SIZE; r++) {
+            for (let c = topLeftCol; c < topLeftCol + maskSize && c < GRID_SIZE; c++) {
+              const cell = cells[r * GRID_SIZE + c];
+              if (cell) {
+                cell.classList.add('cached-highlighted');
+              }
             }
+          }
         }
         
         const selectedWords = new Array(6).fill(null);
@@ -1345,10 +1386,11 @@
         
         window.autoResetOnMaskSelect = true;
         grid.addEventListener('click', async () => {
-            const offset = Math.floor(MASK_SIZE / 2);
+            const maskSize = getMaskSize();
+            const offset = Math.floor(maskSize / 2);
             // Compute the top-left coordinate of the mask ensuring it stays within grid bounds.
-            const safeTopLeftRow = Math.min(Math.max(currentRow - offset, 0), GRID_SIZE - MASK_SIZE);
-            const safeTopLeftCol = Math.min(Math.max(currentCol - offset, 0), GRID_SIZE - MASK_SIZE);
+            const safeTopLeftRow = Math.min(Math.max(currentRow - offset, 0), GRID_SIZE - maskSize);
+            const safeTopLeftCol = Math.min(Math.max(currentCol - offset, 0), GRID_SIZE - maskSize);
             
             // If auto-reset mode is enabled, reset the image before selecting the mask
             if (window.autoResetOnMaskSelect) {
@@ -1378,8 +1420,8 @@
                 
                 // Ensure the mask area is properly highlighted
                 cells.forEach(cell => cell.classList.remove('cached-highlighted'));
-                for (let r = safeTopLeftRow; r < safeTopLeftRow + MASK_SIZE; r++) {
-                    for (let c = safeTopLeftCol; c < safeTopLeftCol + MASK_SIZE; c++) {
+                for (let r = safeTopLeftRow; r < safeTopLeftRow + maskSize && r < GRID_SIZE; r++) {
+                    for (let c = safeTopLeftCol; c < safeTopLeftCol + maskSize && c < GRID_SIZE; c++) {
                         const cell = cells[r * GRID_SIZE + c];
                         if (cell) {
                             cell.classList.add('cached-highlighted');
@@ -1458,19 +1500,22 @@
           cells.forEach(cell => cell.classList.remove('cached-highlighted'));
         });
 
-        // Manual API call button functionality
-        // manualApiCallButton.addEventListener('click', async () => {
-        //   try {
-        //     await updateImage();
-        //   } catch (error) {
-        //     console.error('Manual API call failed:', error);
-        //     // Show error in the response text
-        //     const responseText = section.querySelector('#cached-response-text');
-        //     responseText.textContent = 'Error making manual API call: ' + error.message;
-        //     responseText.style.display = 'block';
-        //     section.querySelector('#cached-current-sentence').style.display = 'none';
-        //   }
-        // });
+        // Add event listener for mask size changes to update the highlight
+        const maskSizeInput = document.getElementById('cached-mask-size');
+        if (maskSizeInput) {
+          maskSizeInput.addEventListener('change', () => {
+            // If we have an active mask, clear it as the size has changed
+            if (maskLocked && activeMask) {
+              maskLocked = false;
+              activeMask = null;
+              cells.forEach(cell => cell.classList.remove('cached-highlighted'));
+            }
+            // Update the highlight with the current mouse position
+            if (currentRow !== undefined && currentCol !== undefined) {
+              highlightCells(currentRow, currentCol);
+            }
+          });
+        }
 
         window.enablePrecaching = false;
         if (window.enablePrecaching) {
@@ -1522,8 +1567,8 @@
               }
               
               const maskPositions = [];
-              for (let r = 0; r <= GRID_SIZE - MASK_SIZE; r++) {
-                for (let c = 0; c <= GRID_SIZE - MASK_SIZE; c++) {
+              for (let r = 0; r <= GRID_SIZE - getMaskSize(); r++) {
+                for (let c = 0; c <= GRID_SIZE - getMaskSize(); c++) {
                   maskPositions.push([r, c]);
                 }
               }
