@@ -160,8 +160,9 @@
     #cached-section .cached-reset-buttons {
       display: flex;
       gap: 10px;
-      margin-top: 10px;
-      justify-content: center;
+      margin-top: 5px;       /* Reduced from 10px */
+      margin-bottom: 15px;   /* Added margin-bottom */
+      justify-content: flex-start; /* Changed from center to flex-start */
     }
 
     #cached-section .cached-reset-button {
@@ -260,7 +261,7 @@
     }
     #cached-section .cached-sentence-builder {
       width: 512px; /* Match width with image container */
-      padding: 20px;
+      padding: 0px 23px; /* Reduced top padding from 20px to 10px */
     }
     #cached-section .cached-output-container {
       width: 512px; /* Match width with image container */
@@ -270,15 +271,18 @@
       display: flex;
       gap: 15px;
       flex-wrap: wrap;
+      justify-content: flex-start; /* Align items to the start of the row */
+      width: 100%; /* Ensure the row takes full width of its container */
     }
     #cached-section .cached-word-option {
-      padding: 12px 20px;
+      padding: 10px 15px; /* Reduced padding from 12px 20px */
       cursor: pointer;
       transition: all 0.2s ease;
       color: #666;
       border-radius: 4px;
       font-weight: 600;
       background: #f5f5f5;
+      margin-bottom: 5px; /* Add bottom margin for better spacing when wrapped */
     }
     #cached-section .cached-word-option:hover {
       color: #000;
@@ -327,8 +331,9 @@
     #cached-section .cached-reset-buttons {
       display: flex;
       gap: 10px;
-      margin-top: 10px;
-      justify-content: center;
+      margin-top: 5px;       /* Reduced from 10px */
+      margin-bottom: 15px;   /* Added margin-bottom */
+      justify-content: flex-start; /* Changed from center to flex-start */
     }
     #cached-section .cached-reset-button {
       padding: 8px 15px;
@@ -815,6 +820,11 @@
         </div>
         
         <div class="cached-sentence-builder">
+          <div class="cached-reset-buttons">
+            <button id="cached-reset-image" class="cached-reset-button">Restore Image</button>
+            <button id="cached-remove-image" class="cached-reset-button">Fully Mask Image</button>
+          </div>
+          
           <h2>Build your sentence:</h2>
           <div class="cached-sentence-row">
             <span class="cached-word-option" data-row="0" data-word="the playful">the playful</span>
@@ -841,12 +851,8 @@
             <span class="cached-word-option" data-row="4" data-word="sunny park">sunny park</span>
             <span class="cached-word-option" data-row="4" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
           </div>
-          <div id="cached-current-sentence" class="cached-text-display">Click word pairs above to build your sentence!</div>
-          
-          <div class="cached-reset-buttons">
-            <button id="cached-reset-image" class="cached-reset-button">Restore Image</button>
-            <button id="cached-remove-image" class="cached-reset-button">T2I (Remove Image)</button>
-          </div>
+          <div id="cached-current-sentence" class="cached-text-display" style="display: none;">Click word pairs above to build your sentence!</div>
+
         </div>
       </div>
       
@@ -963,21 +969,7 @@
         async function callUnidiscAPI(imageBlob, maskArray, sentence, options = {}) {
             // Use effective image removal flag based on options or the global isImageRemoved.
             const effectiveIsImageRemoved = (options.noImage === true) ? true : isImageRemoved;
-
-            // Choose the API URL.
-            // If a random server is requested, pick one from the available list (currently one server is provided).
             let customAPIUrl = API_URL;
-            if (options.useRandomServer && false) {
-                const servers = [
-                    "https://rerun.aswerdlow.com/v1/chat/completions",
-                    "https://87a7dfb75e384cb7f9d5f67adbdd44d5.serveo.net/v1/chat/completions",
-                    "https://83fe744306b30598e70a7bb8c3aa142e.serveo.net/v1/chat/completions",
-                ];
-                customAPIUrl = servers[Math.floor(Math.random() * servers.length)];
-                console.log(`Using server: ${customAPIUrl} for this API call`);
-            } else if (options.serverUrlOverride) {
-                customAPIUrl = options.serverUrlOverride;
-            }
 
             // Replace <mask> with <m> for API call
             const apiSentence = sentence.replace(/<mask>/g, "<m>");
@@ -1353,6 +1345,7 @@
                 }
                 
                 // Reset the mask state after getting response
+                console.log("Clearing mask after getting response");
                 maskLocked = false;
                 activeMask = null;
                 cells.forEach(cell => cell.classList.remove('cached-highlighted'));
@@ -1386,6 +1379,7 @@
                 activeMask[0] === safeTopLeftRow && 
                 activeMask[1] === safeTopLeftCol) {
                 // If clicking on the same mask area, unlock it
+                console.log("Clearing mask after clicking on the same mask area");
                 maskLocked = false;
                 activeMask = null;
                 // Clear highlights
@@ -1440,6 +1434,7 @@
           greyOverlay.style.display = "none";
           
           // Also clear the mask when resetting the image
+          console.log("Clearing mask after resetting the image");
           maskLocked = false;
           activeMask = null;
           cells.forEach(cell => cell.classList.remove('cached-highlighted'));
@@ -1456,6 +1451,7 @@
           isImageRemoved = true; // Set flag to indicate image is removed
           
           // Clear any active mask
+          console.log("Clearing mask after removing image");
           maskLocked = false;
           activeMask = null;
           cells.forEach(cell => cell.classList.remove('cached-highlighted'));
@@ -1475,7 +1471,7 @@
         //   }
         // });
 
-        window.enablePrecaching = true;
+        window.enablePrecaching = false;
         if (window.enablePrecaching) {
           setTimeout(() => {
             async function precache() {
@@ -1579,7 +1575,6 @@
                       config.maskArray, 
                       config.text, 
                       { 
-                        useRandomServer: false,
                         noImage: config.noImage
                       }
                     )
