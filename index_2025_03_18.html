@@ -114,7 +114,7 @@
 
     /* Update the current sentence display */
     #cached-section #cached-current-sentence {
-        margin-top: 20px;
+        margin-top: 10px;
         padding: 15px;
         background-color: #f5f5f5;
         border-radius: 8px;
@@ -281,7 +281,7 @@
       width: 100%; /* Ensure the row takes full width of its container */
     }
     #cached-section .cached-word-option {
-      padding: 10px 15px; /* Reduced padding from 12px 20px */
+      padding: 5px 8px; /* Reduced padding from 12px 20px */
       cursor: pointer;
       transition: all 0.2s ease;
       color: #666;
@@ -289,7 +289,7 @@
       font-weight: 600;
       background: #f5f5f5;
       margin-bottom: 5px; /* Add bottom margin for better spacing when wrapped */
-      font-size: 0.95rem; /* Added smaller font size */
+      font-size: 0.8rem; /* Added smaller font size */
     }
     #cached-section .cached-word-option:hover {
       color: #000;
@@ -378,6 +378,30 @@
     #cached-section .cached-output-container h2 {
       margin-top: 5px;
       /* margin-bottom: 10px; */
+    }
+    
+    /* Add new styles for the sentence groups layout */
+    #cached-section .cached-sentence-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 0px;
+      flex-wrap: wrap;
+    }
+    
+    #cached-section .cached-sentence-row {
+      margin: 4px 0px; /* Reduced from 10px to 5px */
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      width: calc(50% - 10px); /* Take up roughly half minus gap space */
+      min-width: 200px; /* Ensure minimum width for readability */
+    }
+    
+    @media (max-width: 768px) {
+      #cached-section .cached-sentence-row {
+        width: 100%; /* Full width on small screens */
+      }
     }
   </style>
 
@@ -858,37 +882,43 @@
             <button id="cached-remove-image" class="cached-reset-button">Fully Mask</button>
             <div class="cached-mask-size-container">
               <label for="cached-mask-size" class="cached-mask-size-label">Mask Size:</label>
-              <input type="number" id="cached-mask-size" class="cached-mask-size-input" min="2" max="8" value="6">
+              <input type="number" id="cached-mask-size" class="cached-mask-size-input" min="2" max="8" value="7">
             </div>
           </div>
           
-          <h2>Build your sentence:</h2>
-          <div class="cached-sentence-row">
-            <span class="cached-word-option" data-row="0" data-word="a tall">a tall</span>
-            <span class="cached-word-option" data-row="0" data-word="a happy">a happy</span>
-            <span class="cached-word-option" data-row="0" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
+          <h2 style="margin-bottom: 5px;">Build your sentence:</h2>
+          <div class="cached-sentence-group">
+            <div class="cached-sentence-row">
+              <span class="cached-word-option" data-row="0" data-word="a tall">a tall</span>
+              <span class="cached-word-option" data-row="0" data-word="a happy">a happy</span>
+              <span class="cached-word-option" data-row="0" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
+            </div>
+            <div class="cached-sentence-row">
+              <span class="cached-word-option" data-row="1" data-word="giraffe">giraffe</span>
+              <span class="cached-word-option" data-row="1" data-word="puppy">puppy</span>
+              <span class="cached-word-option" data-row="1" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
+            </div>
           </div>
-          <div class="cached-sentence-row">
-            <span class="cached-word-option" data-row="1" data-word="giraffe">giraffe</span>
-            <span class="cached-word-option" data-row="1" data-word="puppy">puppy</span>
-            <span class="cached-word-option" data-row="1" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
+          <div class="cached-sentence-group">
+            <div class="cached-sentence-row">
+              <span class="cached-word-option" data-row="2" data-word="wearing a">wearing a</span>
+              <span class="cached-word-option" data-row="2" data-word="with a">with a</span>
+              <span class="cached-word-option" data-row="2" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
+            </div>
+            <div class="cached-sentence-row">
+              <span class="cached-word-option" data-row="3" data-word="green shirt">green shirt</span>
+              <span class="cached-word-option" data-row="3" data-word="top hat">top hat</span>
+              <span class="cached-word-option" data-row="3" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
+            </div>
           </div>
-          <div class="cached-sentence-row">
-            <span class="cached-word-option" data-row="2" data-word="wearing a">wearing a</span>
-            <span class="cached-word-option" data-row="2" data-word="with a">with a</span>
-            <span class="cached-word-option" data-row="2" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
+          <div class="cached-sentence-group">
+            <div class="cached-sentence-row">
+              <span class="cached-word-option" data-row="4" data-word="detailed portrait">detailed</span>
+              <span class="cached-word-option" data-row="4" data-word="cartoon style">cartoon</span>
+              <span class="cached-word-option" data-row="4" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
+            </div>
           </div>
-          <div class="cached-sentence-row">
-            <span class="cached-word-option" data-row="3" data-word="green shirt">green shirt</span>
-            <span class="cached-word-option" data-row="3" data-word="top hat">top hat</span>
-            <span class="cached-word-option" data-row="3" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
-          </div>
-          <div class="cached-sentence-row">
-            <span class="cached-word-option" data-row="4" data-word="detailed portrait">detailed portrait</span>
-            <span class="cached-word-option" data-row="4" data-word="artistic style">artistic style</span>
-            <span class="cached-word-option" data-row="4" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
-          </div>
-          <div id="cached-current-sentence" class="cached-text-display" style="display: none;">Click word pairs above to build your sentence!</div>
+          <div id="cached-current-sentence" class="cached-text-display">Click word pairs above to build your sentence!</div>
 
         </div>
       </div>
@@ -898,7 +928,6 @@
         <div class="cached-side-title">Output</div>
         <div class="cached-grid-container">
           <img src="static/images/giraffe.png" alt="Output Image" class="cached-image" id="cached-output-image">
-          <!-- Add output grey overlay -->
           <div id="cached-output-overlay" class="cached-grey-overlay" style="display: block;"></div>
         </div>
         
@@ -1237,10 +1266,10 @@
 
         const defaultSelections = [
             "a tall",
-            "giraffe",
+            "puppy",
             "wearing a",
-            "green shirt",
-            "detailed portrait"
+            "top hat",
+            "cartoon style",
         ];
 
         // Initialize with default selections
@@ -1293,14 +1322,28 @@
         });
         
         function updateSentence() {
+            // Set the expected number of characters for each mask segment.
+            // The approximation is 4 characters per token (spaces included),
+            // so if we expect (for example) 6 characters, that results in Math.ceil(6/4) = 2 tokens.
+            const DEFAULT_MASK_EXPECTED_CHARS = 6; // adjust this value as needed
+            const maskTokenCount = Math.ceil(DEFAULT_MASK_EXPECTED_CHARS / 4);
+
+            // Get the selected (or default) words.
             const words = selectedWords.filter(word => word !== null);
             const finalWords = words.length > 0 ? words : defaultSelections;
-            let sentence = finalWords[0] || '';
-            for (let i = 1; i < finalWords.length; i++) {
-                const joiner = (finalWords[i] === '<mask>' || finalWords[i - 1] === '<mask>') ? '<mask>' : ' ';
-                sentence += joiner + finalWords[i];
-            }
-            currentSentence.textContent = sentence + '.';
+            
+            // For each token, if it is "<mask>", expand it into multiple mask tokens.
+            const sentenceParts = finalWords.map(word => {
+                if (word === "<mask>") {
+                    // Create a string that repeats "<mask>" the appropriate number of times.
+                    return new Array(maskTokenCount).fill("<mask>").join("");
+                }
+                return word;
+            });
+            
+            // Join all tokens with a space and append a period.
+            const sentence = sentenceParts.join(" ") + ".";
+            currentSentence.textContent = sentence;
         }
         
         grid.addEventListener('mousemove', (e) => {
@@ -1334,6 +1377,8 @@
                 responseText.textContent = 'Processing your request...';
                 // Show grey overlay while loading
                 outputOverlay.style.display = "block";
+                // Reset any previous custom text in the overlay
+                outputOverlay.innerHTML = "";
                 
                 console.log("sentence: ", sentence);
                 const response = await callUnidiscAPI(imageBlob, maskArray, sentence);
@@ -1380,6 +1425,11 @@
                     outputImage.src = newImageUrl;
                     // Hide the output overlay when image is ready
                     outputOverlay.style.display = "none";
+                } else {
+                    // No image in response, but API was successful
+                    // Show "Image Fixed" text on the overlay
+                    outputOverlay.style.display = "block";
+                    outputOverlay.innerHTML = '<div style="display: flex; justify-content: center; align-items: center; height: 100%; color: white; font-size: 24px; font-weight: bold; text-shadow: 1px 1px 3px black;">Image Fixed</div>';
                 }
             } catch (error) {
                 console.error('Output update failed:', error);
@@ -1417,6 +1467,8 @@
                 activeMask = null;
                 // Clear highlights
                 cells.forEach(cell => cell.classList.remove('cached-highlighted'));
+                // Don't call updateOutput when just removing the mask
+                return;
             } else {
                 // Lock the mask at current position
                 maskLocked = true;
@@ -1502,6 +1554,13 @@
           maskLocked = false;
           activeMask = null;
           cells.forEach(cell => cell.classList.remove('cached-highlighted'));
+          
+          // Call the API after fully masking the image
+          try {
+            await updateOutput();
+          } catch (error) {
+            console.error('Error updating output after fully masking image:', error);
+          }
         });
 
         // Add event listener for mask size changes to update the highlight
