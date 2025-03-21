@@ -249,8 +249,9 @@
       width: 100%;
       height: 100%;
       display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      grid-template-rows: repeat(6, 1fr);
+      /* TODO: Grid define */
+      grid-template-columns: repeat(8, 1fr);
+      grid-template-rows: repeat(8, 1fr);
     }
     #cached-section .cached-grid-cell {
       border: 1px solid black;
@@ -267,7 +268,7 @@
       width: 512px; /* Match width with image container */
     }
     #cached-section .cached-sentence-row {
-      margin: 15px 0;
+      margin: 10px 0; /* Reduced from 15px to 10px */
       display: flex;
       gap: 15px;
       flex-wrap: wrap;
@@ -283,6 +284,7 @@
       font-weight: 600;
       background: #f5f5f5;
       margin-bottom: 5px; /* Add bottom margin for better spacing when wrapped */
+      font-size: 0.95rem; /* Added smaller font size */
     }
     #cached-section .cached-word-option:hover {
       color: #000;
@@ -814,7 +816,7 @@
       <div class="cached-side cached-input-side">
         <div class="cached-side-title">Input</div>
         <div class="cached-grid-container">
-          <img src="static/images/fergus.png" alt="Input Image" class="cached-image" id="cached-input-image">
+          <img src="static/images/giraffe.png" alt="Input Image" class="cached-image" id="cached-input-image">
           <div id="cached-grid" class="cached-grid"></div>
           <div id="cached-grey-overlay" class="cached-grey-overlay"></div>
         </div>
@@ -822,33 +824,34 @@
         <div class="cached-sentence-builder">
           <div class="cached-reset-buttons">
             <button id="cached-reset-image" class="cached-reset-button">Restore Image</button>
-            <button id="cached-remove-image" class="cached-reset-button">Fully Mask Image</button>
+            <button id="cached-clear-mask" class="cached-reset-button">Clear Mask</button>
+            <button id="cached-remove-image" class="cached-reset-button">Fully Mask</button>
           </div>
           
           <h2>Build your sentence:</h2>
           <div class="cached-sentence-row">
-            <span class="cached-word-option" data-row="0" data-word="the playful">the playful</span>
-            <span class="cached-word-option" data-row="0" data-word="a curious">a curious</span>
+            <span class="cached-word-option" data-row="0" data-word="a tall">a tall</span>
+            <span class="cached-word-option" data-row="0" data-word="a happy">a happy</span>
             <span class="cached-word-option" data-row="0" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
           </div>
           <div class="cached-sentence-row">
-            <span class="cached-word-option" data-row="1" data-word="little cat">little cat</span>
-            <span class="cached-word-option" data-row="1" data-word="happy puppy">happy puppy</span>
+            <span class="cached-word-option" data-row="1" data-word="giraffe">giraffe</span>
+            <span class="cached-word-option" data-row="1" data-word="puppy">puppy</span>
             <span class="cached-word-option" data-row="1" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
           </div>
           <div class="cached-sentence-row">
-            <span class="cached-word-option" data-row="2" data-word="is having fun">is having fun</span>
-            <span class="cached-word-option" data-row="2" data-word="is playing">is playing</span>
+            <span class="cached-word-option" data-row="2" data-word="wearing a">wearing a</span>
+            <span class="cached-word-option" data-row="2" data-word="with a">with a</span>
             <span class="cached-word-option" data-row="2" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
           </div>
           <div class="cached-sentence-row">
-            <span class="cached-word-option" data-row="3" data-word="in the">in the</span>
-            <span class="cached-word-option" data-row="3" data-word="near the">near the</span>
+            <span class="cached-word-option" data-row="3" data-word="green shirt">green shirt</span>
+            <span class="cached-word-option" data-row="3" data-word="top hat">top hat</span>
             <span class="cached-word-option" data-row="3" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
           </div>
           <div class="cached-sentence-row">
-            <span class="cached-word-option" data-row="4" data-word="cozy home">cozy home</span>
-            <span class="cached-word-option" data-row="4" data-word="sunny park">sunny park</span>
+            <span class="cached-word-option" data-row="4" data-word="detailed portrait">detailed portrait</span>
+            <span class="cached-word-option" data-row="4" data-word="artistic style">artistic style</span>
             <span class="cached-word-option" data-row="4" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
           </div>
           <div id="cached-current-sentence" class="cached-text-display" style="display: none;">Click word pairs above to build your sentence!</div>
@@ -860,8 +863,9 @@
       <div class="cached-side cached-output-side">
         <div class="cached-side-title">Output</div>
         <div class="cached-grid-container">
-          <img src="static/images/fergus.png" alt="Output Image" class="cached-image" id="cached-output-image">
-          <!-- No grid or overlay needed for output image -->
+          <img src="static/images/giraffe.png" alt="Output Image" class="cached-image" id="cached-output-image">
+          <!-- Add output grey overlay -->
+          <div id="cached-output-overlay" class="cached-grey-overlay" style="display: block;"></div>
         </div>
         
         <div class="cached-output-container">
@@ -911,8 +915,8 @@
             use_reward_models: false
         };
 
-        const GRID_SIZE = 6; // GRID_SIZE x GRID_SIZE.
-        const MASK_SIZE = 3; // Change this number for a different mask size.
+        const GRID_SIZE = 8; // GRID_SIZE x GRID_SIZE.
+        const MASK_SIZE = 6; // Change this number for a different mask size.
         
         // --- Utility functions ---
         async function processImage(imageBytes) {
@@ -1184,30 +1188,14 @@
         }
         
         const selectedWords = new Array(6).fill(null);
-        
-        // Add default selections
-        // const defaultSelections = [
-        //     "the playful",
-        //     "happy puppy",
-        //     "is always",
-        //     "playing",
-        //     "in the",
-        //     "sunny park"
-        // ];
-
-        // const defaultSelections = [
-        //     "the playful",
-        //     "happy puppy",
-        //     "in the",
-        //     "sunny park"
-        // ];
+      
 
         const defaultSelections = [
-            "the playful",
-            "happy puppy",
-            "is having fun",
-            "in the",
-            "sunny park"
+            "a tall",
+            "giraffe",
+            "wearing a",
+            "green shirt",
+            "detailed portrait"
         ];
 
         // Initialize with default selections
@@ -1284,6 +1272,7 @@
                 const currentSentence = section.querySelector('#cached-current-sentence');
                 const responseText = section.querySelector('#cached-response-text');
                 const greyOverlay = section.querySelector('#cached-grey-overlay');
+                const outputOverlay = section.querySelector('#cached-output-overlay');
 
                 let maskArray = null;
                 
@@ -1298,6 +1287,8 @@
                 
                 // Show loading state
                 responseText.textContent = 'Processing your request...';
+                // Show grey overlay while loading
+                outputOverlay.style.display = "block";
                 
                 console.log("sentence: ", sentence);
                 const response = await callUnidiscAPI(imageBlob, maskArray, sentence);
@@ -1342,17 +1333,13 @@
                         ? imageUrl
                         : `data:image/jpeg;base64,${imageUrl}`;
                     outputImage.src = newImageUrl;
+                    // Hide the output overlay when image is ready
+                    outputOverlay.style.display = "none";
                 }
-                
-                // Reset the mask state after getting response
-                console.log("Clearing mask after getting response");
-                maskLocked = false;
-                activeMask = null;
-                cells.forEach(cell => cell.classList.remove('cached-highlighted'));
-
             } catch (error) {
                 console.error('Output update failed:', error);
                 responseText.textContent = 'Error: ' + error.message;
+                // Keep the grey overlay visible on error
             }
         }
         
@@ -1420,9 +1407,10 @@
 
         // Add event listeners for the reset buttons
         const resetImageButton = section.querySelector('#cached-reset-image');
+        const clearMaskButton = section.querySelector('#cached-clear-mask');
         const removeImageButton = section.querySelector('#cached-remove-image');
         const greyOverlay = section.querySelector('#cached-grey-overlay');
-        const originalImageSrc = "static/images/fergus.png"; // Store the original image source
+        const originalImageSrc = "static/images/giraffe.png"; // Store the original image source
         
         // Reset image button functionality
         resetImageButton.addEventListener('click', () => {
@@ -1442,6 +1430,19 @@
           // Reset the output image and response text
           outputImage.src = originalImageSrc;
           responseText.textContent = 'Select words and interact with the input image to see results here.';
+          // Show the output overlay when resetting
+          document.querySelector('#cached-output-overlay').style.display = "block";
+        });
+        
+        // Clear mask button functionality
+        clearMaskButton.addEventListener('click', () => {
+          console.log("Clearing mask without affecting the image");
+          maskLocked = false;
+          activeMask = null;
+          cells.forEach(cell => cell.classList.remove('cached-highlighted'));
+          
+          // Update the output to reflect that the mask has been cleared
+          responseText.textContent = 'Mask cleared. Select an area of the image to mask or choose different words.';
         });
         
         // Remove image button functionality
