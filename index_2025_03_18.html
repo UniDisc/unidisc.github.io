@@ -1281,7 +1281,31 @@
             }
         });
         
-        updateSentence();
+        // Define a constant for default mask expected characters.
+        const DEFAULT_MASK_EXPECTED_CHARS = 6;
+
+        // Helper function to expand a "<mask>" token just like updateSentence does.
+        function expandMaskWord(word) {
+          if (word === "<mask>") {
+            const maskTokenCount = Math.ceil(DEFAULT_MASK_EXPECTED_CHARS / 4);
+            return new Array(maskTokenCount).fill("<mask>").join("");
+          }
+          return word;
+        }
+
+        // Updated updateSentence function to use the helper function.
+        function updateSentence() {
+          // Get the selected (or default) words.
+          const words = selectedWords.filter(word => word !== null);
+          const finalWords = words.length > 0 ? words : defaultSelections;
+          
+          // Expand any "<mask>" tokens consistently.
+          const sentenceParts = finalWords.map(expandMaskWord);
+          
+          // Join tokens with a space and append a period.
+          const sentence = sentenceParts.join(" ") + ".";
+          currentSentence.textContent = sentence;
+        }
         
         section.querySelectorAll('.cached-word-option').forEach(word => {
             word.addEventListener('click', async () => {
@@ -1320,31 +1344,6 @@
                 }
             });
         });
-        
-        function updateSentence() {
-            // Set the expected number of characters for each mask segment.
-            // The approximation is 4 characters per token (spaces included),
-            // so if we expect (for example) 6 characters, that results in Math.ceil(6/4) = 2 tokens.
-            const DEFAULT_MASK_EXPECTED_CHARS = 6; // adjust this value as needed
-            const maskTokenCount = Math.ceil(DEFAULT_MASK_EXPECTED_CHARS / 4);
-
-            // Get the selected (or default) words.
-            const words = selectedWords.filter(word => word !== null);
-            const finalWords = words.length > 0 ? words : defaultSelections;
-            
-            // For each token, if it is "<mask>", expand it into multiple mask tokens.
-            const sentenceParts = finalWords.map(word => {
-                if (word === "<mask>") {
-                    // Create a string that repeats "<mask>" the appropriate number of times.
-                    return new Array(maskTokenCount).fill("<mask>").join("");
-                }
-                return word;
-            });
-            
-            // Join all tokens with a space and append a period.
-            const sentence = sentenceParts.join(" ") + ".";
-            currentSentence.textContent = sentence;
-        }
         
         grid.addEventListener('mousemove', (e) => {
             const rect = grid.getBoundingClientRect();
@@ -1603,30 +1602,27 @@
 
               // Generate all possible combinations of words from all rows (0-5)
               if (Object.keys(rowOptions).length > 0) {
-                function buildSentences(currentSentence, currentRow) {
-                  if (currentRow > 4) {
-                    console.log(currentSentence + ".");
-                    textCombinations.push(currentSentence + ".");
+                function buildSentences(tokens, currentRow) {
+                  if (currentRow === 5) { // reached the end of rows (assumes 5 rows)
+                    // Build the final sentence by mapping tokens through expandMaskWord.
+                    const sentence = tokens.map(expandMaskWord).join(" ") + ".";
+                    console.log(sentence);
+                    textCombinations.push(sentence);
                     return;
                   }
                   
                   if (rowOptions[currentRow]) {
                     for (const word of rowOptions[currentRow]) {
-                      let newSentence;
-                      if (currentSentence === "") {
-                        newSentence = word;
-                      } else {
-                        const joiner = (currentSentence.endsWith("<mask>") || word === "<mask>") ? "<mask>" : " ";
-                        newSentence = currentSentence + joiner + word;
-                      }
-                      buildSentences(newSentence, currentRow + 1);
+                      // Accumulate tokens for the current sentence
+                      buildSentences([...tokens, word], currentRow + 1);
                     }
                   } else {
-                    buildSentences(currentSentence, currentRow + 1);
+                    // If no tokens on this row, continue to the next.
+                    buildSentences(tokens, currentRow + 1);
                   }
                 }
                 
-                buildSentences("", 0);
+                buildSentences([], 0);
               }
               
               const maskPositions = [];
@@ -1718,6 +1714,29 @@
     </script>
   </section>
 
+  <section class="hero is-small is-light">
+    <div class="hero-body">
+      <div class="container">
+        <h2 class="title is-3 has-text-centered" style="margin-bottom: 2rem;">
+          Demo Video
+          <a href="#demo_video" class="anchor-link">
+            <i class="fas fa-link"></i>
+          </a>
+        </h2>
+  
+        <div class="columns is-centered">
+          <div class="column is-five-sixths has-text-centered">
+            <video width="100%" controls autoplay loop style="border-radius: 12px;">
+              <source src="static/videos/demo_video.mov" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </div>
+        <p class="has-text-centered"><b>Demo Video:</b> UniDisc can jointly inpaint images and text pairs. Please checkout the demo on our <a href="https://github.com/alexanderswerdlow/unidisc">GitHub</a>.</p>
+      </div>
+    </div>
+  </section>
+
   <section class="hero is-small pt-6 pb-3">
     <div class="hero-body">
       <div class="container">
@@ -1740,30 +1759,7 @@
     </div>
   </section>
 
-  <section class="hero is-small">
-    <div class="hero-body">
-      <div class="container">
-        <!-- <h2 class="title is-3 " style="margin-bottom: 2rem;">
-          Demo Video:
-          <a href="#demo_video" class="anchor-link">
-            <i class="fas fa-link"></i>
-          </a>
-        </h2>
-   -->
-        <div class="columns is-centered">
-          <div class="column is-five-sixths has-text-centered">
-            <video width="100%" controls autoplay loop>
-              <source src="static/videos/demo_video.mov" type="video/mp4">
-              Your browser does not support the video tag.
-            </video>
-          </div>
-        </div>
-        <p class="has-text-centered"><b>Demo Video:</b> UniDisc can jointly inpaint images and text pairs. Please checkout the demo on our <a href="https://github.com/alexanderswerdlow/unidisc">GitHub</a>.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="hero is-small pt-5 pb-6">
+  <section class="hero is-small pt-5 pb-6 is-light">
     <div class="hero-body">
       <div class="container">
         <h2 id="scaling_laws" class="title is-3 has-text-centered">
