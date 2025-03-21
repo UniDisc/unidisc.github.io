@@ -1263,7 +1263,6 @@
         
         const selectedWords = new Array(6).fill(null);
       
-
         const defaultSelections = [
             "a happy",
             "puppy",
@@ -1290,7 +1289,7 @@
         function expandMaskWord(word) {
           if (word === "<mask>") {
             const maskTokenCount = Math.ceil(DEFAULT_MASK_EXPECTED_CHARS / 4);
-            return new Array(maskTokenCount).fill("<mask>").join("");
+            return new Array(maskTokenCount).fill("<mask>").join(" ");
           }
           return word;
         }
@@ -1305,7 +1304,7 @@
           const sentenceParts = finalWords.map(expandMaskWord);
           
           // Join tokens with a space and append a period.
-          const sentence = sentenceParts.join(" ") + ".";
+          const sentence = sentenceParts.join("") + ", ";
           currentSentence.textContent = sentence;
         }
         
