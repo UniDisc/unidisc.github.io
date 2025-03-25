@@ -1,29 +1,5 @@
 (() => {
-    let API_URL = "https://rerun.aswerdlow.com/v1/chat/completions"; // Production URL
-    // const DEV_API_URL = "https://grafana.aswerdlow.com/v1/chat/completions"; // Dev URL
-    
-    // // Add URL selector functionality
-    // const devUrlSelector = document.getElementById('dev-url-selector');
-    // const prodServerBtn = document.getElementById('prod-server-btn');
-    // const devServerBtn = document.getElementById('dev-server-btn');
-    
-    // // Only initialize if the elements exist (for easy disabling)
-    // if (devUrlSelector && prodServerBtn && devServerBtn) {
-    //   prodServerBtn.addEventListener('click', () => {
-    //     API_URL = API_URL;
-    //     prodServerBtn.classList.add('is-primary');
-    //     devServerBtn.classList.remove('is-primary');
-    //     console.log("Using production server:", API_URL);
-    //   });
-      
-    //   devServerBtn.addEventListener('click', () => {
-    //     API_URL = DEV_API_URL;
-    //     devServerBtn.classList.add('is-primary');
-    //     prodServerBtn.classList.remove('is-primary');
-    //     console.log("Using development server:", API_URL);
-    //   });
-    // }
-
+    let API_URL = "https://rerun.aswerdlow.com/v1/chat/completions";
     const HARDCODED_CONFIG = {
         temperature: 0.9,
         top_p: 0.95,
@@ -36,8 +12,13 @@
         use_reward_models: true
     };
 
-    const GRID_SIZE = 8; // GRID_SIZE x GRID_SIZE.
-    // Replace the hardcoded MASK_SIZE with a function
+    const GRID_SIZE = 8;
+    window.autoResetOnMaskSelect = true;
+    window.enable_cache = false;
+
+    let isImageRemoved = false; // Add flag to track if image is removed
+    let DISABLE_HASH_CHECKING = false; // Add this flag to globally disable hash checking
+
     function getMaskSize() {
       const maskSizeInput = document.getElementById('cached-mask-size');
       if (maskSizeInput) {
@@ -95,11 +76,7 @@
         };
     }
     
-    let isImageRemoved = false; // Add flag to track if image is removed
-    let DISABLE_HASH_CHECKING = false; // Add this flag to globally disable hash checking
-    
-    // Refactored callUnidiscAPI function accepting an options parameter.
-    // This function will be used both by normal interactions and by the precaching code.
+
     async function callUnidiscAPI(imageBlob, maskArray, sentence, options = {}) {
         // Use effective image removal flag based on options or the global isImageRemoved.
         const effectiveIsImageRemoved = (options.noImage === true) ? true : isImageRemoved;
@@ -268,12 +245,13 @@
     const responseText = section.querySelector('#cached-response-text');
     const inputImage = section.querySelector('#cached-input-image');
     const outputImage = section.querySelector('#cached-output-image');
+
     const cells = [];
     let currentRow = 0;
     let currentCol = 0;
     let maskLocked = false; // Add this flag to track if mask is locked in place
     let activeMask = null; // Track the currently active mask coordinates
-    
+
     for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
       const cell = document.createElement('div');
       cell.className = 'cached-grid-cell';
@@ -334,25 +312,18 @@
         }
     });
 
-    updateSentence();
-    
-    function expandMaskWord(word) {
-    //   if (word === "<mask>") {
-    //     const maskTokenCount = Math.ceil(DEFAULT_MASK_EXPECTED_CHARS / 4);
-    //     return new Array(maskTokenCount).fill("<mask>").join("");
-    //   }
-      return word;
+    currentSentence.textContent = processSentence(selectedWords);
+
+    function constructSentence(words) {
+        return words.join(" ")
+               .replace(" , ", ", ")
+               .replace(/<mask>\s<mask>/g, "<mask><mask><mask>");
     }
 
-    // Updated updateSentence function to use the helper function.
-    function updateSentence() {
-      const words = selectedWords.filter(word => word !== null);
+    function processSentence(words_to_process) {
+      const words = words_to_process.filter(word => word !== null);
       const finalWords = words.length > 0 ? words : defaultSelections;
-      const sentenceParts = finalWords.map(expandMaskWord);
-      const sentence = sentenceParts.join(" ")
-        .replace(" , ", ", ")
-        .replace(/<mask>\s<mask>/g, "<mask><mask><mask>")
-      currentSentence.textContent = sentence;
+      return constructSentence(finalWords);
     }
     
     section.querySelectorAll('.cached-word-option').forEach(word => {
@@ -382,7 +353,7 @@
             word.classList.add('cached-selected');
             selectedWords[row] = wordText;
     
-            updateSentence();
+            currentSentence.textContent = processSentence(selectedWords);
             
             try {
                 await updateOutput();
@@ -482,7 +453,6 @@
         }
     }
     
-    window.autoResetOnMaskSelect = true;
     grid.addEventListener('click', async () => {
         const maskSize = getMaskSize();
         const offset = Math.floor(maskSize / 2);
@@ -624,8 +594,7 @@
       });
     }
 
-    window.enablePrecaching = false;
-    if (window.enablePrecaching) {
+    if (window.enable_cache) {
       setTimeout(() => {
         async function precache() {
           async function getImageBlob() {
@@ -643,22 +612,23 @@
             rowOptions[row].push(word);
           });
 
+          let numWords = Object.keys(rowOptions).length
+          console.log(`Found ${numWords} words to process.`);
           const textCombinations = [];
 
-          // Generate all possible combinations of words from all rows (0-5)
+          // Generate all possible combinations of words
           if (Object.keys(rowOptions).length > 0) {
             function buildSentences(tokens, currentRow) {
-              if (currentRow === 5) { // reached the end of rows (assumes 5 rows)
-                // Build the final sentence by mapping tokens through expandMaskWord.
-                const sentence = tokens.map(expandMaskWord).join(" ") + ".";
-                console.log(sentence);
+              if (currentRow === numWords) {
+                const sentence = processSentence(tokens);
+                console.log("sentence: ", sentence);
                 textCombinations.push(sentence);
                 return;
               }
               
               if (rowOptions[currentRow]) {
                 for (const word of rowOptions[currentRow]) {
-                  // Accumulate tokens for the current sentence
+                  // Accumulate tokens for the current sentence.
                   buildSentences([...tokens, word], currentRow + 1);
                 }
               } else {
@@ -711,8 +681,10 @@
             });
           }
 
-          const BATCH_SIZE = 1024;      // Process this many requests at once
-          const DELAY_MS = 1000;      // Wait this many ms between batches
+          console.log(`Precaching prepared: ${apiCallConfigs.length} API calls (${textCombinations.length} text combinations and ${maskPositions.length} mask positions)`);
+
+          const BATCH_SIZE = 128;      // Process this many requests at once
+          const DELAY_MS = 10000;      // Wait this many ms between batches
           let completedCalls = 0;
 
           for (let i = 0; i < apiCallConfigs.length; i += BATCH_SIZE) {
@@ -744,7 +716,7 @@
               })
             );
             
-            // Add delay between batches (skip delay for the last batch)
+            // Add delay between batches
             if (i + BATCH_SIZE < apiCallConfigs.length) {
               await new Promise(resolve => setTimeout(resolve, DELAY_MS));
             }
