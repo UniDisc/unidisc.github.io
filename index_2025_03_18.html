@@ -107,13 +107,14 @@
     /* Update the cached-sentence-builder width and layout */
     #cached-section .cached-sentence-builder {
         flex-grow: 1;
-        padding: 20px;
-        max-width: 420px; /* Adjusted to balance with grid container */
+        width: 100%; /* Changed from fixed 512px to 100% */
+        padding: 0px 23px; /* Keep existing padding */
+        max-width: 512px; /* Add max-width that matches the grid container */
     }
 
     /* Update the current sentence display */
     #cached-section #cached-current-sentence {
-        margin-top: 20px;
+        margin-top: 10px;
         padding: 15px;
         background-color: #f5f5f5;
         border-radius: 8px;
@@ -127,7 +128,7 @@
 
     /* Add styles for the response text */
     #cached-section #cached-response-text {
-        margin-top: 20px;
+        margin-top: 8px;
         padding: 15px;
         background-color: #e6f7ff;
         border-radius: 8px;
@@ -137,7 +138,7 @@
         box-sizing: border-box;
         white-space: pre-wrap;
         word-break: break-word;
-        display: none; /* Initially hidden */
+        display: block; /* Changed from none to block */
     }
 
     /* Adjust the main container spacing */
@@ -160,8 +161,13 @@
     #cached-section .cached-reset-buttons {
       display: flex;
       gap: 10px;
-      margin-top: 10px;
-      justify-content: center;
+      margin-top: 5px;       
+      margin-bottom: 15px;   
+      justify-content: flex-start;
+      flex-wrap: wrap;     /* Changed from nowrap to wrap to handle different screen sizes */
+      overflow-x: visible; /* Changed from auto to visible since we're allowing wrapping */
+      padding-bottom: 5px;
+      width: 100%;         /* Added to ensure it takes full width */
     }
 
     #cached-section .cached-reset-button {
@@ -188,6 +194,214 @@
       background-color: #888888; /* Solid grey color */
       z-index: 10; /* Ensure it's above the grid */
       display: none; /* Initially hidden */
+    }
+
+    /* Scoped styles for the cached section */
+    #cached-section {
+      font-family: Arial, sans-serif;
+    }
+    /* Restore bolder text for headers and word options */
+    #cached-section h2,
+    #cached-section .cached-word-option {
+      font-weight: 700;
+    }
+    #cached-section .cached-main-container {
+      display: flex;
+      max-width: 1200px; /* Increased width to accommodate side-by-side layout */
+      margin: 0 auto;
+      gap: 40px;
+      align-items: flex-start;
+      padding: 0 20px;
+    }
+    /* Updated to have input and output sides */
+    #cached-section .cached-side {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px; /* Reduced from 20px */
+      width: 50%;
+    }
+    /* Left side (input) - left aligned */
+    #cached-section .cached-input-side {
+      align-items: flex-start;
+    }
+    /* Right side (output) - center aligned */
+    #cached-section .cached-output-side {
+      align-items: center;
+    }
+    #cached-section .cached-side-title {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 1.2rem;
+      width: 100%;
+    }
+    #cached-section .cached-grid-container {
+      position: relative;
+      width: 512px;
+      height: 512px;
+      margin: 0 auto;
+    }
+    #cached-section .cached-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    #cached-section .cached-grid {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      /* TODO: Grid define */
+      grid-template-columns: repeat(8, 1fr);
+      grid-template-rows: repeat(8, 1fr);
+    }
+    #cached-section .cached-grid-cell {
+      border: 1px solid black;
+      transition: background-color 0.1s ease;
+    }
+    #cached-section .cached-highlighted {
+      background-color: rgba(128, 128, 128, 0.9);
+    }
+    #cached-section .cached-sentence-builder {
+      width: 512px; /* Match width with image container */
+      padding: 0px 23px; /* Reduced top padding from 20px to 10px */
+    }
+    #cached-section .cached-output-container {
+      width: 512px; /* Match width with image container */
+    }
+    #cached-section .cached-sentence-row {
+      margin: 10px 0; /* Reduced from 15px to 10px */
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      justify-content: flex-start; /* Align items to the start of the row */
+      width: 100%; /* Ensure the row takes full width of its container */
+    }
+    #cached-section .cached-word-option {
+      padding: 5px 8px; /* Reduced padding from 12px 20px */
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: #666;
+      border-radius: 4px;
+      font-weight: 600;
+      background: #f5f5f5;
+      margin-bottom: 5px; /* Add bottom margin for better spacing when wrapped */
+      font-size: 0.8rem; /* Added smaller font size */
+    }
+    #cached-section .cached-word-option:hover {
+      color: #000;
+      font-weight: 600;
+      background: #e5e5e5;
+    }
+    #cached-section .cached-word-option.cached-selected {
+      color: #886a6a;
+      font-weight: 600;
+      background: #e0e0e0;
+    }
+    #cached-section .cached-text-display {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f5f5f5;
+      border-radius: 8px;
+      min-height: 30px;
+      font-family: monospace;
+      width: 100%;
+      box-sizing: border-box;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    #cached-section .cached-output-display {
+      margin-top: 10px;
+      padding: 15px;
+      background-color: #e6f7ff;
+      border-radius: 8px;
+      min-height: 30px;
+      font-family: monospace;
+      width: 100%;
+      box-sizing: border-box;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    #cached-section .cached-grey-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #888888;
+      z-index: 10;
+      display: none;
+    }
+    #cached-section .cached-reset-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 5px;       
+      margin-bottom: 15px;   
+      justify-content: flex-start;
+      flex-wrap: nowrap;     /* Prevent wrapping */
+      overflow-x: auto;      /* Allow horizontal scrolling if needed */
+      padding-bottom: 5px;   /* Add space for potential scrollbar */
+    }
+    #cached-section .cached-reset-button {
+      padding: 8px 15px;
+      background-color: #f5f5f5;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s ease;
+    }
+    #cached-section .cached-reset-button:hover {
+      background-color: #e0e0e0;
+    }
+    #cached-section .cached-mask-size-container {
+      display: flex;
+      align-items: center;
+      margin-left: 10px;
+    }
+    #cached-section .cached-mask-size-label {
+      font-size: 12px;
+      margin-right: 5px;
+      white-space: nowrap;
+    }
+    #cached-section .cached-mask-size-input {
+      width: 50px;
+      padding: 6px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 12px;
+      text-align: center;
+    }
+    #cached-section .cached-output-container h2 {
+      margin-top: 5px;
+      /* margin-bottom: 10px; */
+    }
+    
+    /* Add new styles for the sentence groups layout */
+    #cached-section .cached-sentence-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 0px;
+      flex-wrap: wrap;
+    }
+    
+    #cached-section .cached-sentence-row {
+      margin: 4px 0px; /* Reduced from 10px to 5px */
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      width: calc(50% - 10px); /* Take up roughly half minus gap space */
+      min-width: 200px; /* Ensure minimum width for readability */
+    }
+    
+    @media (max-width: 768px) {
+      #cached-section .cached-sentence-row {
+        width: 100%; /* Full width on small screens */
+      }
     }
   </style>
 
@@ -407,168 +621,7 @@
         }
       </style>
       <div class="flip-card-container"></div>
-      <script>
-        (function() {
-          const flipCardsData = [
-            { 
-              frontUrl: "static/images/unidisc_main/unidisc_main.002.jpeg", 
-              frontCaption: "", 
-              backUrl: "static/images/unidisc_main/unidisc_main.001.jpeg", 
-              backCaption: ""
-            },
-            { 
-              frontUrl: "static/images/unidisc_main/unidisc_main.004.jpeg", 
-              frontCaption: "",
-              backUrl: "static/images/unidisc_main/unidisc_main.003.jpeg", 
-              backCaption: "", 
-            },
-            { 
-              frontUrl: "static/images/unidisc_main/unidisc_main.006.jpeg", 
-              frontCaption: "",
-              backUrl: "static/images/unidisc_main/unidisc_main.005.jpeg", 
-              backCaption: "", 
-            },
-            { 
-              frontUrl: "static/images/unidisc_main/unidisc_main.008.jpeg", 
-              frontCaption: "",
-              backUrl: "static/images/unidisc_main/unidisc_main.007.jpeg", 
-              backCaption: "", 
-            },
-            { 
-              frontUrl: "static/images/unidisc_main/unidisc_main.010.jpeg", 
-              frontCaption: "", 
-              backUrl: "static/images/unidisc_main/unidisc_main.009.jpeg", 
-              backCaption: "",
-            },
-            { 
-              frontUrl: "static/images/unidisc_main/unidisc_main.012.jpeg", 
-              frontCaption: "", 
-              backUrl: "static/images/unidisc_main/unidisc_main.011.jpeg", 
-              backCaption: "",
-            },
-            { 
-              frontUrl: "static/images/unidisc_main/unidisc_main.014.jpeg", 
-              frontCaption: "", 
-              backUrl: "static/images/unidisc_main/unidisc_main.013.jpeg", 
-              backCaption: "",
-            },
-            { 
-              frontUrl: "static/images/unidisc_main/unidisc_main.016.jpeg", 
-              frontCaption: "", 
-              backUrl: "static/images/unidisc_main/unidisc_main.015.jpeg", 
-              backCaption: "",
-            },
-            {
-              frontUrl: "static/images/unidisc_main/unidisc_main.018.jpeg", 
-              frontCaption: "", 
-              backUrl: "static/images/unidisc_main/unidisc_main.017.jpeg", 
-              backCaption: "",
-            },
-            { 
-              frontUrl:  "static/images/unidisc_main/unidisc_main.020.jpeg", 
-              frontCaption: "", 
-              backUrl: "static/images/unidisc_main/unidisc_main.019.jpeg",
-              backCaption: "",
-            },
-            { 
-              frontUrl: "static/images/unidisc_main/unidisc_main.022.jpeg", 
-              frontCaption: "", 
-              backUrl: "static/images/unidisc_main/unidisc_main.021.jpeg", 
-              backCaption: "",
-            },
-            { 
-              frontUrl: "static/images/unidisc_main/unidisc_main.024.jpeg", 
-              frontCaption: "", 
-              backUrl: "static/images/unidisc_main/unidisc_main.023.jpeg", 
-              backCaption: "",
-            },
-            { 
-              frontUrl: "static/images/unidisc_main/unidisc_main.026.jpeg", 
-              frontCaption: "", 
-              backUrl: "static/images/unidisc_main/unidisc_main.025.jpeg", 
-              backCaption: ""
-            },
-            { 
-              frontUrl: "static/images/unidisc_main/unidisc_main.028.jpeg", 
-              frontCaption: "", 
-              backUrl: "static/images/unidisc_main/unidisc_main.027.jpeg", 
-              backCaption: "",
-            },
-            { 
-              frontUrl: "static/images/unidisc_main/unidisc_main.030.jpeg", 
-              frontCaption: "", 
-              backUrl: "static/images/unidisc_main/unidisc_main.029.jpeg", 
-              backCaption: "",
-            }
-            // ,
-            // { 
-            //   frontUrl: "static/images/flipping/joint/19_f.png", 
-            //   frontCaption: "", 
-            //   backUrl: "static/images/flipping/joint/19_b.png", 
-            //   backCaption: "",
-            // }            
-          ];
-
-          // Randomize the order of flipCardsData
-          flipCardsData.sort(() => Math.random() - 0.5);
-          const container = document.querySelector('#flipping-images-section .flip-card-container');
-          
-          flipCardsData.forEach(card => {
-            const cardDiv = document.createElement('div');
-            cardDiv.className = 'flip-card';
-            cardDiv.innerHTML = `
-              <div class="flip-card-inner">
-                <div class="flip-card-front">
-                  
-                  <figure>
-                    <img src="${card.frontUrl}" alt="Front Image">
-                    ${card.frontCaption ? `<figcaption>${card.frontCaption}</figcaption>` : ''}
-                  </figure>
-                </div>
-                <div class="flip-card-back">
-                  <span class="input-label">Input</span>
-                  <figure>
-                    <div class="back-image-container">
-                      <img src="${card.backUrl}" alt="Back Image">
-                      <div class="back-image-overlay"></div>
-                    </div>
-                    ${card.backCaption ? `<figcaption>${card.backCaption}</figcaption>` : ''}
-                  </figure>
-                </div>
-              </div>
-            `;
-            container.appendChild(cardDiv);
-          });
-          
-          function initFlipCards() {
-            const flipCards = document.querySelectorAll('#flipping-images-section .flip-card');
-            flipCards.forEach(card => {
-              card.addEventListener('click', () => {
-                card.classList.toggle('flipped');
-              });
-            });
-          }
-          
-          if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initFlipCards);
-          } else {
-            initFlipCards();
-          }
-          
-          // Automatic random flipping logic
-          (function autoFlip() {
-            const flipCards = Array.from(document.querySelectorAll('#flipping-images-section .flip-card'));
-            function randomFlipCard() {
-              if (flipCards.length === 0) return;
-              const randomIndex = Math.floor(Math.random() * flipCards.length);
-              const card = flipCards[randomIndex];
-              card.classList.toggle('flipped');
-              setTimeout(randomFlipCard, 3000);
-            }
-            setTimeout(randomFlipCard, 3000);
-          })();
-        })();
-      </script>
+      <script src="static/js/flip_cards.js"></script>
     </section>
 
   <!-- Teaser Image -->
@@ -607,976 +660,103 @@
       </div>
     </div>
   </section>
-<!-- 
-  <section class="hero is-small">
-    <div class="hero-body">
-      <div class="container">
-        <div id="results-carousel" class="carousel results-carousel">
-        <div class="item">
-          <img src="static/images/architecture_diagram.webp" alt="MY ALT TEXT" style="padding-bottom: 20px;"/>
-          <h2 class="subtitle has-text-centered">
-            UniDisc's architecture.
-          </h2>
-        </div>
-        <div class="item">
-          <img src="static/images/modality_plot.webp" alt="MY ALT TEXT"/>
-          <h2 class="subtitle has-text-centered">
-            UniDisc's modality plot.
-          </h2>
-        </div>
-        <div class="item">
-          <img src="static/images/carousel3.jpg" alt="MY ALT TEXT"/>
-          <h2 class="subtitle has-text-centered">
-          Third image description.
-        </h2>
-      </div>
-      <div class="item">
-        <img src="static/images/carousel4.jpg" alt="MY ALT TEXT"/>
-        <h2 class="subtitle has-text-centered">
-          Fourth image description.
-        </h2>
-      </div>
-    </div>
-  </div>
-  </div>
-  </section> -->
 
-  <!-- TODO: Remove. -->
-  <!-- <div id="dev-url-selector" style="text-align: center; margin-bottom: 10px; padding: 10px; background-color: #f8f8f8; border-radius: 4px;">
-    <span style="font-size: 12px; color: #666;">SERVER: </span>
-    <button id="prod-server-btn" class="button is-small is-primary">Older</button>
-    <button id="dev-server-btn" class="button is-small">Newer</button>
-  </div> -->
-
-  <!-- cached-section starts here -->
   <section id="cached-section" class="section">
-    <style>
-      /* Scoped styles for the cached section */
-      #cached-section {
-        font-family: Arial, sans-serif;
-      }
-      /* Restore bolder text for headers and word options */
-      #cached-section h2,
-      #cached-section .cached-word-option {
-        font-weight: 700;
-      }
-      #cached-section .cached-main-container {
-        display: flex;
-        max-width: 1050px; /* Reduced from 1200px */
-        margin: 0 auto; /* Center the container */
-        gap: 40px; /* Increased from 20px for more balanced spacing */
-        align-items: flex-start;
-        padding: 0 20px; /* Add padding to prevent edge touching */
-      }
-      #cached-section .cached-left-container {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-      }
-      #cached-section .cached-grid-container {
-        position: relative;
-        width: 512px;
-        height: 512px;
-      }
-      #cached-section .cached-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-      #cached-section .cached-grid {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        grid-template-rows: repeat(5, 1fr);
-      }
-      #cached-section .cached-grid-cell {
-        border: 1px solid black;
-        transition: background-color 0.1s ease;
-      }
-      #cached-section .cached-highlighted {
-        background-color: rgba(128, 128, 128, 0.9);
-      }
-      #cached-section .cached-sentence-builder {
-        flex-grow: 1;
-        padding: 20px;
-        max-width: 500px; /* Add max-width to constrain the builder section */
-      }
-      #cached-section .cached-sentence-row {
-        margin: 15px 0;
-        display: flex;
-        gap: 15px;
-        flex-wrap: wrap;
-      }
-      #cached-section .cached-word-option {
-        padding: 12px 20px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        color: #666;
-        border-radius: 4px;
-        font-weight: 600;
-        background: #f5f5f5;
-      }
-      #cached-section .cached-word-option:hover {
-        color: #000;
-        font-weight: 600;
-        background: #e5e5e5;
-      }
-      #cached-section .cached-word-option.cached-selected {
-        color: #886a6a;
-        font-weight: 600;
-        background: #e0e0e0;
-      }
-      #cached-section #cached-current-sentence {
-        margin-top: 20px;
-        padding: 15px;
-        background-color: #f5f5f5;
-        border-radius: 8px;
-        min-height: 30px;
-        font-family: monospace;
-        width: 100%; /* Ensure it takes full width of its container */
-        box-sizing: border-box; /* Include padding in width calculation */
-        white-space: pre-wrap; /* Allow text to wrap */
-        word-break: break-word; /* Break long words if needed */
-      }
-    </style>
-
-    <!-- HTML content for cached.html with namespaced IDs/classes -->
     <div class="cached-main-container">
-      <div class="cached-left-container">
+      <!-- Left side - Input -->
+      <div class="cached-side cached-input-side">
+        <div class="cached-side-title">Input</div>
         <div class="cached-grid-container">
-          <img src="static/images/fergus.png" alt="Grid Image" class="cached-image">
+          <img src="static/images/giraffe.png" alt="Input Image" class="cached-image" id="cached-input-image">
           <div id="cached-grid" class="cached-grid"></div>
-          <!-- Add grey overlay div -->
           <div id="cached-grey-overlay" class="cached-grey-overlay"></div>
-          <!-- Add reset buttons below the image -->
+        </div>
+        
+        <div class="cached-sentence-builder">
           <div class="cached-reset-buttons">
             <button id="cached-reset-image" class="cached-reset-button">Restore Image</button>
-            <button id="cached-remove-image" class="cached-reset-button">T2I (Remove Image)</button>
-            <!-- <button id="cached-manual-api-call" class="cached-reset-button">Manual API Call</button> -->
+            <button id="cached-clear-mask" class="cached-reset-button">Clear Mask</button>
+            <button id="cached-remove-image" class="cached-reset-button">Fully Mask</button>
+            <div class="cached-mask-size-container">
+              <label for="cached-mask-size" class="cached-mask-size-label">Mask Size:</label>
+              <input type="number" id="cached-mask-size" class="cached-mask-size-input" min="2" max="8" value="7">
+            </div>
           </div>
+          
+          <h2 style="margin-bottom: 5px;">Build your sentence:</h2>
+          <div class="cached-sentence-group">
+            <div class="cached-sentence-row">
+              <span class="cached-word-option" data-row="0" data-word="a tall">a tall</span>
+              <span class="cached-word-option" data-row="0" data-word="a happy">a happy</span>
+              <span class="cached-word-option" data-row="0" data-word="&lt;mask&gt;&lt;mask&gt;&lt;mask&gt;">&lt;mask&gt;</span>
+            </div>
+            <div class="cached-sentence-row">
+              <span class="cached-word-option" data-row="1" data-word="giraffe">giraffe</span>
+              <span class="cached-word-option" data-row="1" data-word="puppy">puppy</span>
+              <span class="cached-word-option" data-row="1" data-word="&lt;mask&gt;&lt;mask&gt;&lt;mask&gt;">&lt;mask&gt;</span>
+            </div>
+          </div>
+          <div class="cached-sentence-group">
+            <div class="cached-sentence-row">
+              <span class="cached-word-option" data-row="2" data-word="wearing a">wearing a</span>
+              <span class="cached-word-option" data-row="2" data-word="with a">with a</span>
+              <span class="cached-word-option" data-row="2" data-word="&lt;mask&gt;&lt;mask&gt;">&lt;mask&gt;</span>
+            </div>
+            <div class="cached-sentence-row">
+              <span class="cached-word-option" data-row="3" data-word="green shirt">green shirt</span>
+              <span class="cached-word-option" data-row="3" data-word="top hat">top hat</span>
+              <span class="cached-word-option" data-row="3" data-word="&lt;mask&gt;&lt;mask&gt;">&lt;mask&gt;</span>
+            </div>
+          </div>
+          <div class="cached-sentence-group">
+            <div class="cached-sentence-row">
+              <span class="cached-word-option" data-row="4" data-word=", detailed portrait">detailed</span>
+              <span class="cached-word-option" data-row="4" data-word=", cartoon style">cartoon</span>
+              <span class="cached-word-option" data-row="4" data-word="&lt;mask&gt;&lt;mask&gt;">&lt;mask&gt;</span>
+            </div>
+          </div>
+          <div id="cached-current-sentence" class="cached-text-display">Click word pairs above to build your sentence!</div>
         </div>
       </div>
-
-      <div class="cached-sentence-builder">
-        <h2>Build your sentence:</h2>
-        <div class="cached-sentence-row">
-          <span class="cached-word-option" data-row="0" data-word="the playful">the playful</span>
-          <span class="cached-word-option" data-row="0" data-word="a curious">a curious</span>
-          <span class="cached-word-option" data-row="0" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
+      
+      <!-- Right side - Output -->
+      <div class="cached-side cached-output-side">
+        <div class="cached-side-title">Output</div>
+        <div class="cached-grid-container">
+          <img src="static/images/giraffe.png" alt="Output Image" class="cached-image" id="cached-output-image">
+          <div id="cached-output-overlay" class="cached-grey-overlay" style="display: block;"></div>
         </div>
-        <div class="cached-sentence-row">
-          <span class="cached-word-option" data-row="1" data-word="little cat">little cat</span>
-          <span class="cached-word-option" data-row="1" data-word="happy puppy">happy puppy</span>
-          <span class="cached-word-option" data-row="1" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
+        
+        <div class="cached-output-container">
+          <h2>Model Response:</h2>
+          <div id="cached-response-text" class="cached-output-display">Select words and interact with the input image to see results here.</div>
         </div>
-        <!-- <div class="cached-sentence-row">
-          <span class="cached-word-option" data-row="2" data-word="is">is</span>
-          <span class="cached-word-option" data-row="2" data-word="was just">was just</span>
-          <span class="cached-word-option" data-row="2" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
-        </div> -->
-        <div class="cached-sentence-row">
-          <span class="cached-word-option" data-row="2" data-word="is having fun">is having fun</span>
-          <span class="cached-word-option" data-row="2" data-word="is playing">is playing</span>
-          <span class="cached-word-option" data-row="2" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
-        </div>
-        <div class="cached-sentence-row">
-          <span class="cached-word-option" data-row="3" data-word="in the">in the</span>
-          <span class="cached-word-option" data-row="3" data-word="near the">near the</span>
-          <span class="cached-word-option" data-row="3" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
-        </div>
-        <div class="cached-sentence-row">
-          <span class="cached-word-option" data-row="4" data-word="cozy home">cozy home</span>
-          <span class="cached-word-option" data-row="4" data-word="sunny park">sunny park</span>
-          <span class="cached-word-option" data-row="4" data-word="&lt;mask&gt;">&lt;mask&gt;</span>
-        </div>
-        <div id="cached-current-sentence">Click word pairs above to build your sentence!</div>
-        <div id="cached-response-text"></div>
       </div>
     </div>
+    <script src="static/js/cached_section.js"></script>
+  </section>
 
-    <script>
-      (() => {
-
-        let API_URL = "https://rerun.aswerdlow.com/v1/chat/completions"; // Production URL
-        // const DEV_API_URL = "https://grafana.aswerdlow.com/v1/chat/completions"; // Dev URL
-        
-        // // Add URL selector functionality
-        // const devUrlSelector = document.getElementById('dev-url-selector');
-        // const prodServerBtn = document.getElementById('prod-server-btn');
-        // const devServerBtn = document.getElementById('dev-server-btn');
-        
-        // // Only initialize if the elements exist (for easy disabling)
-        // if (devUrlSelector && prodServerBtn && devServerBtn) {
-        //   prodServerBtn.addEventListener('click', () => {
-        //     API_URL = API_URL;
-        //     prodServerBtn.classList.add('is-primary');
-        //     devServerBtn.classList.remove('is-primary');
-        //     console.log("Using production server:", API_URL);
-        //   });
-          
-        //   devServerBtn.addEventListener('click', () => {
-        //     API_URL = DEV_API_URL;
-        //     devServerBtn.classList.add('is-primary');
-        //     prodServerBtn.classList.remove('is-primary');
-        //     console.log("Using development server:", API_URL);
-        //   });
-        // }
-
-        const HARDCODED_CONFIG = {
-            temperature: 0.9,
-            top_p: 0.95,
-            maskgit_r_temp: 4.5,
-            cfg: 2.5,
-            max_tokens: 32,
-            resolution: 512,
-            sampling_steps: 32,
-            sampler: "maskgit_nucleus",
-            use_reward_models: false
-        };
-
-        const GRID_SIZE = 5; // GRID_SIZE x GRID_SIZE.
-        const MASK_SIZE = 3; // Change this number for a different mask size.
-        
-        // --- Utility functions ---
-        async function processImage(imageBytes) {
-            const img = await createImageBitmap(new Blob([imageBytes], { type: 'image/jpeg' }));
-            const canvas = squareCrop(img);
-            return canvas.convertToBlob({ quality: 0.95, type: 'image/jpeg' });
-        }
-        
-        function squareCrop(img) {
-            const size = Math.min(img.width, img.height);
-            const canvas = new OffscreenCanvas(size, size);
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img,
-                (img.width - size) / 2, (img.height - size) / 2, size, size,
-                0, 0, size, size
-            );
-            return canvas;
-        }
-        
-        function encodeMask(maskArray) {
-            const rows = maskArray.length;
-            const cols = maskArray[0].length;
-            const canvas = document.createElement('canvas');
-            canvas.width = cols;
-            canvas.height = rows;
-            const ctx = canvas.getContext('2d');
-        
-            const imageData = ctx.createImageData(cols, rows);
-            for (let i = 0; i < maskArray.flat().length; i++) {
-                const val = maskArray.flat()[i];
-                const color = val ? 255 : 0;
-                const pixelIndex = i * 4; // Each pixel uses 4 bytes in the array
-                
-                imageData.data[pixelIndex]     = color; // R
-                imageData.data[pixelIndex + 1] = color; // G
-                imageData.data[pixelIndex + 2] = color; // B
-                imageData.data[pixelIndex + 3] = color; // A
-            }
-            ctx.putImageData(imageData, 0, 0);
-        
-            const dataURL = canvas.toDataURL("image/png");
-            return {
-                data: dataURL.split(',')[1],
-                width: cols,
-                height: rows
-            };
-        }
-        
-        let isImageRemoved = false; // Add flag to track if image is removed
-        let DISABLE_HASH_CHECKING = false; // Add this flag to globally disable hash checking
-        
-        // Refactored callUnidiscAPI function accepting an options parameter.
-        // This function will be used both by normal interactions and by the precaching code.
-        async function callUnidiscAPI(imageBlob, maskArray, sentence, options = {}) {
-            // Use effective image removal flag based on options or the global isImageRemoved.
-            const effectiveIsImageRemoved = (options.noImage === true) ? true : isImageRemoved;
-
-            // Choose the API URL.
-            // If a random server is requested, pick one from the available list (currently one server is provided).
-            let customAPIUrl = API_URL;
-            if (options.useRandomServer && false) {
-                const servers = [
-                    "https://rerun.aswerdlow.com/v1/chat/completions",
-                    "https://87a7dfb75e384cb7f9d5f67adbdd44d5.serveo.net/v1/chat/completions",
-                    "https://83fe744306b30598e70a7bb8c3aa142e.serveo.net/v1/chat/completions",
-                ];
-                customAPIUrl = servers[Math.floor(Math.random() * servers.length)];
-                console.log(`Using server: ${customAPIUrl} for this API call`);
-            } else if (options.serverUrlOverride) {
-                customAPIUrl = options.serverUrlOverride;
-            }
-
-            // Replace <mask> with <m> for API call
-            const apiSentence = sentence.replace(/<mask>/g, "<m>");
-            console.log("Called API with sentence: ", apiSentence);
-            const messages = [{
-                    role: "user",
-                    content: [
-                        { type: "text", text: apiSentence }
-                    ]
-                },
-                {
-                    role: "assistant",
-                    content: []
-                }
-            ];
-
-            // Check if we need to include the image and mask
-            const hasMaskedText = apiSentence.includes("<m>");
-            const hasMaskedImage = maskArray && maskArray.some(row => row.some(cell => cell === true));
-
-            let imageBase64;
-            let maskData;
-
-            // Only include image and mask if needed AND image is not removed.
-            if ((hasMaskedText || hasMaskedImage) && !effectiveIsImageRemoved) {
-                const resizedImage = await processImage(await imageBlob.arrayBuffer());
-                imageBase64 = await new Promise(resolve => {
-                    const reader = new FileReader();
-                    reader.onload = () => resolve(reader.result);
-                    reader.readAsDataURL(resizedImage);
-                });
-                messages[1].content.push({
-                    type: "image_url",
-                    image_url: { url: imageBase64 },
-                    is_mask: false
-                });
-
-                if (maskArray) {
-                    maskData = encodeMask(maskArray);
-                    messages[1].content.push({
-                        type: "image_url",
-                        image_url: {
-                            url: `data:image/png;base64,${maskData.data}`,
-                            mask_info: JSON.stringify({
-                                width: maskData.width,
-                                height: maskData.height
-                            })
-                        },
-                        is_mask: true
-                    });
-                }
-            }
-
-            if (messages.length > 0 &&
-                messages[messages.length - 1].role === 'assistant' &&
-                (!messages[messages.length - 1].content ||
-                 messages[messages.length - 1].content.length === 0)) {
-                console.log("Removing empty assistant message");
-                messages.pop(); // Remove the empty assistant message
-            }
-
-            // Create the payload without the hash first.
-            const payload = {
-                messages,
-                model: "unidisc",
-                ...HARDCODED_CONFIG
-            };
-
-            // Caching logic - hash the entire request payload.
-            let hash = null;
-            
-            // Skip hash generation and checking if DISABLE_HASH_CHECKING is true
-            if (!DISABLE_HASH_CHECKING && !options.skipHashChecking) {
-                try {
-                    const payloadString = JSON.stringify(payload);
-                    const encoder = new TextEncoder();
-                    const data = encoder.encode(payloadString);
-
-                    if (typeof crypto !== 'undefined' && crypto.subtle) {
-                        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-                        const hashArray = Array.from(new Uint8Array(hashBuffer));
-                        hash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-                        console.log("Hash generated from full payload:", hash);
-                    } else {
-                        throw new Error('Web Crypto API is not available. Please ensure you are serving your page over HTTPS or via localhost.');
-                    }
-                } catch (error) {
-                    console.error('Error generating hash:', error);
-                }
-            }
-
-            try {
-                // Check cache using the hash only if hash checking is enabled
-                if (hash && !DISABLE_HASH_CHECKING && !options.skipHashChecking) {
-                    try {
-                        const response = await fetch(`/static/responses/${hash}.json`, {
-                            mode: 'cors',
-                            headers: {
-                                'Accept': 'application/json'
-                            }
-                        });
-                        if (response.ok) {
-                            const jsonContent = await response.text();
-                            console.log("Cache hit!");
-                            const cachedData = JSON.parse(jsonContent);
-                            console.log("Cached data: ", cachedData);
-                            return {
-                                choices: [{
-                                    index: 0,
-                                    message: cachedData,
-                                    finish_reason: "stop"
-                                }]
-                            };
-                        } else {
-                            console.log("Cache miss:", response);
-                        }
-                    } catch (cacheError) {
-                        console.log("Cache access failed:", cacheError);
-                        console.log("Proceeding with direct API call");
-                    }
-                }
-            } catch (error) {
-                console.log("Cache miss:", error)
-            }
-
-            console.log("Hash: ", hash);
-
-            // Only add hash to payload if hash checking is enabled
-            if (hash && !DISABLE_HASH_CHECKING) {
-                payload.request_hash = hash;
-            }
-
-            console.log("Payload: ", payload);
-
-            try {
-                const response = await fetch(customAPIUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Access-Control-Allow-Origin': '*',
-                        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-                        'Access-Control-Allow-Headers': 'Content-Type'
-                    },
-                    body: JSON.stringify(payload)
-                });
-                if (!response.ok) throw new Error(`API Error: ${response.status}`);
-                const data = await response.json();
-                console.log("Response: ", data);
-                return data;
-            } catch (error) {
-                console.error('API call failed:', error);
-                throw error;
-            }
-        }
-
-        window.callUnidiscAPI = callUnidiscAPI;
-        
-        // --- Begin cached section-specific code ---
-        const section = document.getElementById('cached-section');
-        const grid = section.querySelector('#cached-grid');
-        const currentSentence = section.querySelector('#cached-current-sentence');
-        const cells = [];
-        let currentRow = 0;
-        let currentCol = 0;
-        let maskLocked = false; // Add this flag to track if mask is locked in place
-        let activeMask = null; // Track the currently active mask coordinates
-        
-        // Create grid cells based on GRID_SIZE.
-        for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
-          const cell = document.createElement('div');
-          cell.className = 'cached-grid-cell';
-          cell.dataset.row = Math.floor(i / GRID_SIZE);
-          cell.dataset.col = i % GRID_SIZE;
-          grid.appendChild(cell);
-          cells.push(cell);
-        }
-        
-        // Helper function to create a mask array from top-left coordinates
-        function createMaskArray(topLeftRow, topLeftCol) {
-          const maskArray = Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(false));
-          for (let r = topLeftRow; r < topLeftRow + MASK_SIZE; r++) {
-            for (let c = topLeftCol; c < topLeftCol + MASK_SIZE; c++) {
-              maskArray[r][c] = true;
-            }
-          }
-          return maskArray;
-        }
-        
-        // Update highlighted grid region.
-        function highlightCells(row, col) {
-            // If mask is locked, don't update highlights on mousemove
-            if (maskLocked) return;
-            
-            cells.forEach(cell => cell.classList.remove('cached-highlighted'));
-            const offset = Math.floor(MASK_SIZE / 2);
-            const topLeftRow = Math.min(Math.max(row - offset, 0), GRID_SIZE - MASK_SIZE);
-            const topLeftCol = Math.min(Math.max(col - offset, 0), GRID_SIZE - MASK_SIZE);
-            currentRow = topLeftRow + offset;
-            currentCol = topLeftCol + offset;
-        
-            for (let r = topLeftRow; r < topLeftRow + MASK_SIZE; r++) {
-                for (let c = topLeftCol; c < topLeftCol + MASK_SIZE; c++) {
-                    const cell = cells[r * GRID_SIZE + c];
-                    if (cell) {
-                        cell.classList.add('cached-highlighted');
-                    }
-                }
-            }
-        }
-        
-        const selectedWords = new Array(6).fill(null);
-        
-        // Add default selections
-        // const defaultSelections = [
-        //     "the playful",
-        //     "happy puppy",
-        //     "is always",
-        //     "playing",
-        //     "in the",
-        //     "sunny park"
-        // ];
-
-        // const defaultSelections = [
-        //     "the playful",
-        //     "happy puppy",
-        //     "in the",
-        //     "sunny park"
-        // ];
-
-        const defaultSelections = [
-            "the playful",
-            "happy puppy",
-            "is having fun",
-            "in the",
-            "sunny park"
-        ];
-
-        // Initialize with default selections
-        defaultSelections.forEach((word, index) => {
-            selectedWords[index] = word;
-            const wordElement = section.querySelector(`.cached-word-option[data-row="${index}"][data-word="${word}"]`);
-            if (wordElement) {
-                wordElement.classList.add('cached-selected');
-            }
-        });
-        
-        updateSentence();
-        
-        section.querySelectorAll('.cached-word-option').forEach(word => {
-            word.addEventListener('click', async () => {
-                const row = parseInt(word.dataset.row);
-                const wordText = word.dataset.word;
-        
-                // If auto-reset mode is enabled AND the image is not already removed,
-                // reset the image before changing text
-                if (window.autoResetOnMaskSelect && !isImageRemoved) {
-                    const img = section.querySelector('.cached-image');
-                    img.src = originalImageSrc;
-                    img.style.filter = "none"; // Clear any filters
-                    isImageRemoved = false; // Reset the image removed flag
-                    
-                    // Hide the grey overlay
-                    greyOverlay.style.display = "none";
-                    
-                    // Clear any previous response text
-                    const responseText = section.querySelector('#cached-response-text');
-                    responseText.style.display = 'none';
-                    section.querySelector('#cached-current-sentence').style.display = 'block';
-                }
-        
-                section.querySelectorAll(`.cached-word-option[data-row="${row}"]`)
-                       .forEach(w => w.classList.remove('cached-selected'));
-        
-                word.classList.add('cached-selected');
-                selectedWords[row] = wordText;
-        
-                updateSentence();
-                
-                // Call API directly without requiring a mask
-                try {
-                    await updateImage();
-                } catch (error) {
-                    console.error('Error updating image after text change:', error);
-                }
-            });
-        });
-        
-        function updateSentence() {
-            const words = selectedWords.filter(word => word !== null);
-            const finalWords = words.length > 0 ? words : defaultSelections;
-            let sentence = finalWords[0] || '';
-            for (let i = 1; i < finalWords.length; i++) {
-                const joiner = (finalWords[i] === '<mask>' || finalWords[i - 1] === '<mask>') ? '<mask>' : ' ';
-                sentence += joiner + finalWords[i];
-            }
-            currentSentence.textContent = sentence + '.';
-        }
-        
-        grid.addEventListener('mousemove', (e) => {
-            const rect = grid.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            const col = Math.floor((x / rect.width) * GRID_SIZE);
-            const row = Math.floor((y / rect.height) * GRID_SIZE);
-            highlightCells(row, col);
-        });
-        
-        async function updateImage() {
-            try {
-                const img = section.querySelector('.cached-image');
-                const currentSentence = section.querySelector('#cached-current-sentence');
-                const responseText = section.querySelector('#cached-response-text');
-                const greyOverlay = section.querySelector('#cached-grey-overlay'); // Get the overlay
-
-                let maskArray = null;
-                
-                // Only create a mask if we have an active mask
-                if (activeMask) {
-                    const [topLeftRow, topLeftCol] = activeMask;
-                    maskArray = createMaskArray(topLeftRow, topLeftCol);
-                }
-        
-                const sentence = currentSentence.textContent
-                const imageBlob = await fetch(img.src).then(res => res.blob());
-                
-                // Show loading state
-                currentSentence.style.display = 'none';
-                responseText.style.display = 'block';
-                responseText.textContent = 'Processing your request...';
-                
-                console.log("sentence: ", sentence);
-                const response = await callUnidiscAPI(imageBlob, maskArray, sentence);
-
-                // Always remove the grey overlay when a response comes in
-                greyOverlay.style.display = "none";
-                
-                const message = response.choices?.[0]?.message;
-                if (!message) {
-                    throw new Error("No message found in the API response");
-                }
-
-                // Extract text content if available
-                let textContent = '';
-                if (Array.isArray(message.content)) {
-                    const textPart = message.content.find(part => part.type === "text");
-                    if (textPart && textPart.text) {
-                        textContent = textPart.text;
-                    }
-                } else if (typeof message.content === 'string') {
-                    textContent = message.content;
-                }
-
-                // Update response text
-                if (textContent) {
-                    responseText.textContent = textContent;
-                } else {
-                    responseText.textContent = 'Image updated successfully!';
-                }
-
-                // Check if there's an image in the response
-                let imageUrl = null;
-                if (Array.isArray(message.content)) {
-                    const imagePart = message.content.find(part => part.type === "image_url");
-                    if (imagePart && imagePart.image_url && imagePart.image_url.url) {
-                        imageUrl = imagePart.image_url.url;
-                    }
-                } else if (message.image_url && message.image_url.url) {
-                    imageUrl = message.image_url.url;
-                }
-
-                // Only update the image if:
-                // 1. We didn't send an image (isImageRemoved is true), OR
-                // 2. We sent both an image AND a mask (maskArray exists and has at least one true value)
-                const hasMask = maskArray && maskArray.some(row => row.some(cell => cell === true));
-                
-                console.log("isImageRemoved: ", isImageRemoved);
-                console.log("hasMask: ", hasMask);
-                
-                if (imageUrl && (isImageRemoved || hasMask)) {
-                    const newImageUrl = imageUrl.startsWith("data:image/jpeg;base64,")
-                        ? imageUrl
-                        : `data:image/jpeg;base64,${imageUrl}`;
-                    img.src = newImageUrl;
-                }
-
-                // Always show the response text if we have it
-                if (textContent) {
-                    responseText.style.display = 'block';
-                    currentSentence.style.display = 'none';
-                } else {
-                    // If no text response, show the current sentence again
-                    responseText.style.display = 'none';
-                    currentSentence.style.display = 'block';
-                }
-                
-                // Reset the mask state after getting response
-                maskLocked = false;
-                activeMask = null;
-                cells.forEach(cell => cell.classList.remove('cached-highlighted'));
-
-            } catch (error) {
-                console.error('Image update failed:', error);
-                const responseText = section.querySelector('#cached-response-text');
-                responseText.textContent = 'Error: ' + error.message;
-                responseText.style.display = 'block';
-                section.querySelector('#cached-current-sentence').style.display = 'none';
-            }
-        }
-        
-        window.autoResetOnMaskSelect = true;
-        grid.addEventListener('click', async () => {
-            const offset = Math.floor(MASK_SIZE / 2);
-            // Compute the top-left coordinate of the mask ensuring it stays within grid bounds.
-            const safeTopLeftRow = Math.min(Math.max(currentRow - offset, 0), GRID_SIZE - MASK_SIZE);
-            const safeTopLeftCol = Math.min(Math.max(currentCol - offset, 0), GRID_SIZE - MASK_SIZE);
-            
-            // If auto-reset mode is enabled, reset the image before selecting the mask
-            if (window.autoResetOnMaskSelect) {
-                const img = section.querySelector('.cached-image');
-                img.src = originalImageSrc;
-                img.style.filter = "none"; // Clear any filters
-                isImageRemoved = false; // Reset the image removed flag
-                
-                // Hide the grey overlay
-                greyOverlay.style.display = "none";
-                
-                // Clear any previous response text
-                const responseText = section.querySelector('#cached-response-text');
-                responseText.style.display = 'none';
-                section.querySelector('#cached-current-sentence').style.display = 'block';
-            }
-            
-            if (maskLocked && 
-                activeMask && 
-                activeMask[0] === safeTopLeftRow && 
-                activeMask[1] === safeTopLeftCol) {
-                // If clicking on the same mask area, unlock it
-                maskLocked = false;
-                activeMask = null;
-                // Clear highlights
-                cells.forEach(cell => cell.classList.remove('cached-highlighted'));
-            } else {
-                // Lock the mask at current position
-                maskLocked = true;
-                activeMask = [safeTopLeftRow, safeTopLeftCol];
-                
-                // Ensure the mask area is properly highlighted
-                cells.forEach(cell => cell.classList.remove('cached-highlighted'));
-                for (let r = safeTopLeftRow; r < safeTopLeftRow + MASK_SIZE; r++) {
-                    for (let c = safeTopLeftCol; c < safeTopLeftCol + MASK_SIZE; c++) {
-                        const cell = cells[r * GRID_SIZE + c];
-                        if (cell) {
-                            cell.classList.add('cached-highlighted');
-                        }
-                    }
-                }
-            }
-        
-            try {
-                await updateImage();
-            } catch (error) {
-                console.error('Error updating image:', error);
-            }
-        });
-        
-        grid.addEventListener('mouseleave', () => {
-            // Only clear highlights if mask is not locked
-            if (!maskLocked) {
-                cells.forEach(cell => cell.classList.remove('cached-highlighted'));
-            }
-        });
-        
-        // Initialize highlighting with default values.
-        highlightCells(1, 1);
-
-        // Add event listeners for the reset buttons
-        const resetImageButton = section.querySelector('#cached-reset-image');
-        const removeImageButton = section.querySelector('#cached-remove-image');
-        // const manualApiCallButton = section.querySelector('#cached-manual-api-call'); // Add reference to the new button
-        const greyOverlay = section.querySelector('#cached-grey-overlay');
-        const originalImageSrc = "static/images/fergus.png"; // Store the original image source
-        
-        // Reset image button functionality
-        resetImageButton.addEventListener('click', () => {
-          const img = section.querySelector('.cached-image');
-          img.src = originalImageSrc;
-          img.style.filter = "none"; // Clear any filters
-          isImageRemoved = false; // Reset the image removed flag
-          
-          // Hide the grey overlay
-          greyOverlay.style.display = "none";
-          
-          // Also clear the mask when resetting the image
-          maskLocked = false;
-          activeMask = null;
-          cells.forEach(cell => cell.classList.remove('cached-highlighted'));
-          
-          // Reset the response text
-          const responseText = section.querySelector('#cached-response-text');
-          responseText.style.display = 'none';
-          section.querySelector('#cached-current-sentence').style.display = 'block';
-        });
-        
-        // Remove image button functionality
-        removeImageButton.addEventListener('click', () => {
-          // Show the solid grey overlay
-          greyOverlay.style.display = "block";
-          isImageRemoved = true; // Set flag to indicate image is removed
-          
-          // Clear any active mask
-          maskLocked = false;
-          activeMask = null;
-          cells.forEach(cell => cell.classList.remove('cached-highlighted'));
-        });
-
-        // Manual API call button functionality
-        // manualApiCallButton.addEventListener('click', async () => {
-        //   try {
-        //     await updateImage();
-        //   } catch (error) {
-        //     console.error('Manual API call failed:', error);
-        //     // Show error in the response text
-        //     const responseText = section.querySelector('#cached-response-text');
-        //     responseText.textContent = 'Error making manual API call: ' + error.message;
-        //     responseText.style.display = 'block';
-        //     section.querySelector('#cached-current-sentence').style.display = 'none';
-        //   }
-        // });
-
-        window.enablePrecaching = false;
-        if (window.enablePrecaching) {
-          setTimeout(() => {
-            async function precache() {
-              async function getImageBlob() {
-                const img = document.querySelector('.cached-image');
-                if (!img) throw new Error("No image element found for precaching.");
-                return await fetch(img.src).then(res => res.blob());
-              }
-
-              const rowOptions = {};
-              const wordElements = document.querySelectorAll('#cached-section .cached-word-option');
-              wordElements.forEach(elem => {
-                const row = elem.getAttribute('data-row');
-                const word = elem.getAttribute('data-word');
-                if (!rowOptions[row]) rowOptions[row] = [];
-                rowOptions[row].push(word);
-              });
-
-              const textCombinations = [];
-
-              // Generate all possible combinations of words from all rows (0-5)
-              if (Object.keys(rowOptions).length > 0) {
-                function buildSentences(currentSentence, currentRow) {
-                  if (currentRow > 4) {
-                    console.log(currentSentence + ".");
-                    textCombinations.push(currentSentence + ".");
-                    return;
-                  }
-                  
-                  if (rowOptions[currentRow]) {
-                    for (const word of rowOptions[currentRow]) {
-                      let newSentence;
-                      if (currentSentence === "") {
-                        newSentence = word;
-                      } else {
-                        const joiner = (currentSentence.endsWith("<mask>") || word === "<mask>") ? "<mask>" : " ";
-                        newSentence = currentSentence + joiner + word;
-                      }
-                      buildSentences(newSentence, currentRow + 1);
-                    }
-                  } else {
-                    buildSentences(currentSentence, currentRow + 1);
-                  }
-                }
-                
-                buildSentences("", 0);
-              }
-              
-              const maskPositions = [];
-              for (let r = 0; r <= GRID_SIZE - MASK_SIZE; r++) {
-                for (let c = 0; c <= GRID_SIZE - MASK_SIZE; c++) {
-                  maskPositions.push([r, c]);
-                }
-              }
-
-              let imageBlob = null;
-              try {
-                imageBlob = await getImageBlob();
-              } catch (e) {
-                console.error("Failed to fetch image for precaching:", e);
-              }
-
-              const apiCallConfigs = [];
-              for (const text of textCombinations) {
-                // (1) With image and every possible mask.
-                for (const [topRow, topCol] of maskPositions) {
-                  const maskArray = createMaskArray(topRow, topCol);
-                  apiCallConfigs.push({ 
-                    text, 
-                    maskArray, 
-                    type: "with mask",
-                    position: [topRow, topCol]
-                  });
-                }
-                // (2) With image and no mask.
-                apiCallConfigs.push({ 
-                  text, 
-                  maskArray: null, 
-                  type: "no mask" 
-                });
-                // (3) No image (simulate removal).
-                apiCallConfigs.push({ 
-                  text, 
-                  maskArray: null, 
-                  type: "no image",
-                  noImage: true 
-                });
-              }
-
-              const BATCH_SIZE = 1024;      // Process this many requests at once
-              const DELAY_MS = 1000;      // Wait this many ms between batches
-              let completedCalls = 0;
-
-              for (let i = 0; i < apiCallConfigs.length; i += BATCH_SIZE) {
-                const batch = apiCallConfigs.slice(i, i + BATCH_SIZE);
-                
-                await Promise.all(
-                  batch.map(config => {
-                    return callUnidiscAPI(
-                      imageBlob, 
-                      config.maskArray, 
-                      config.text, 
-                      { 
-                        useRandomServer: false,
-                        noImage: config.noImage
-                      }
-                    )
-                    .then(() => {
-                      completedCalls++;
-                      if (completedCalls % 10 === 0) {
-                        console.log(`Precaching progress: ${completedCalls}/${apiCallConfigs.length} complete`);
-                      }
-                    })
-                    .catch(err => console.error(
-                      "Precaching call failed:", 
-                      config.type, 
-                      config.text, 
-                      config.position || "", 
-                      err
-                    ));
-                  })
-                );
-                
-                // Add delay between batches (skip delay for the last batch)
-                if (i + BATCH_SIZE < apiCallConfigs.length) {
-                  await new Promise(resolve => setTimeout(resolve, DELAY_MS));
-                }
-              }
-
-              console.log(`Precaching complete. Total API calls made: ${apiCallConfigs.length}`);
-            }
-            precache();
-          }, 1000);
-        }
-      })();
-    </script>
+  <section class="hero is-small is-light">
+    <div class="hero-body">
+      <div class="container">
+        <h2 class="title is-3 has-text-centered" style="margin-bottom: 2rem;">
+          Demo Video
+          <a href="#demo_video" class="anchor-link">
+            <i class="fas fa-link"></i>
+          </a>
+        </h2>
+  
+        <div class="columns is-centered">
+          <div class="column is-five-sixths has-text-centered">
+            <video width="100%" controls autoplay loop style="border-radius: 12px;">
+              <source src="static/videos/demo_video.mov" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </div>
+        <p class="has-text-centered"><b>Demo Video:</b> UniDisc can jointly inpaint images and text pairs. Please checkout the demo on our <a href="https://github.com/alexanderswerdlow/unidisc">GitHub</a>.</p>
+      </div>
+    </div>
   </section>
 
   <section class="hero is-small pt-6 pb-3">
@@ -1601,7 +781,7 @@
     </div>
   </section>
 
-  <section class="hero is-small pt-5 pb-6">
+  <section class="hero is-small pt-5 pb-6 is-light">
     <div class="hero-body">
       <div class="container">
         <h2 id="scaling_laws" class="title is-3 has-text-centered">
