@@ -748,7 +748,7 @@
   
         <div class="columns is-centered">
           <div class="column is-five-sixths has-text-centered">
-            <video width="100%" controls loop style="border-radius: 12px;">
+            <video width="100%" controls loop muted style="border-radius: 12px;">
               <source src="static/videos/demo_video.mov" type="video/mp4">
               Your browser does not support the video tag.
             </video>
@@ -777,6 +777,12 @@
             <p style="padding-bottom: 30px;">UniDisc is a unified multimodal discrete diffusion model that can jointly process and generate text and images. First, each modality is converted into a sequnece of discrete tokens and we randomly replace a subset of these tokens with the [MASK] token according to a noise schedule and denoted in the figure with grey boxes. We jointly denoise the image and text and supervise with a weighted cross-entropy loss. At inference time we begin with a set of [MASK] tokens and iteratively unmask tokens.</p>
           </div>
         </div>
+        <video width="100%" autoplay loop muted playsinline>
+          <source src="static/videos/unidisc_generation.mov" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+
+        
       </div>
     </div>
   </section>
