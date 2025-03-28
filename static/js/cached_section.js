@@ -15,7 +15,7 @@
     const GRID_SIZE = 8;
     window.autoResetOnMaskSelect = true;
     window.enable_cache = false;
-
+    window.skipHashChecking = false;
     let isImageRemoved = false; // Add flag to track if image is removed
     let DISABLE_HASH_CHECKING = false; // Add this flag to globally disable hash checking
 
@@ -152,6 +152,8 @@
         // Caching logic - hash the entire request payload.
         let hash = null;
         console.log("Payload: ", payload);
+        console.log("DISABLE_HASH_CHECKING: ", DISABLE_HASH_CHECKING);
+        console.log("options.skipHashChecking: ", options.skipHashChecking);
         
         // Skip hash generation and checking if DISABLE_HASH_CHECKING is true
         if (!DISABLE_HASH_CHECKING && !options.skipHashChecking) {
